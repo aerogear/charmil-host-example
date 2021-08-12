@@ -1,0 +1,49 @@
+ifdef::env-github,env-browser[:context: cmd]
+[id='ref-rhoas-kafka-topic-delete_{context}']
+= rhoas kafka topic delete
+
+[role="_abstract"]
+Delete a topic
+
+[discrete]
+== Synopsis
+
+Delete a topic in the current Apache Kafka instance.
+
+
+....
+rhoas kafka topic delete [flags]
+....
+
+[discrete]
+== Examples
+
+....
+# delete a topic
+$ rhoas kafka topic delete topic-1
+
+....
+
+[discrete]
+== Options
+
+  `-y`, `--yes`::   Skip confirmation to forcibly delete a topic
+
+[discrete]
+== Options inherited from parent commands
+
+  `-h`, `--help`::      Show help for a command
+  `-v`, `--verbose`::   Enable verbose mode
+      `--version`::     Show rhoas version
+
+[discrete]
+== See also
+
+
+ifdef::env-github,env-browser[]
+* link:rhoas_kafka_topic.adoc#rhoas-kafka-topic[rhoas kafka topic]	 - Create, describe, update, list and delete topics
+endif::[]
+ifdef::pantheonenv[]
+* link:{path}#ref-rhoas-kafka-topic_{context}[rhoas kafka topic]	 - Create, describe, update, list and delete topics
+endif::[]
+

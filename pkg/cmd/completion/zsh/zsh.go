@@ -1,0 +1,21 @@
+package zsh
+
+import (
+	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
+	"github.com/spf13/cobra"
+)
+
+func NewCommand(f *factory.Factory) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:                   f.Localizer.MustLocalize("completion.zsh.cmd.use"),
+		Short:                 f.Localizer.MustLocalize("completion.zsh.cmd.shortDescription"),
+		Long:                  f.Localizer.MustLocalize("completion.zsh.cmd.longDescription"),
+		DisableFlagsInUseLine: true,
+		Args:                  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Parent().Parent().GenZshCompletion(f.IOStreams.Out)
+		},
+	}
+
+	return cmd
+}
