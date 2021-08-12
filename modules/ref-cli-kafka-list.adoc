@@ -1,0 +1,49 @@
+ifdef::env-github,env-browser[:context: cmd]
+[id='ref-rhoas-kafka-list_{context}']
+= rhoas kafka list
+
+[role="_abstract"]
+List all Apache Kafka instances
+
+[discrete]
+== Synopsis
+
+List all Apache Kafka instances.
+
+This command will provide a high level view of all Kafka instances.
+The fields displayed are: ID, Name, Owner, Status, Cloud Provider, Region.
+Use the describe command to view all fields for a specific instance.
+
+The instances are displayed by default in a table, but can also be displayed as JSON or YAML.
+
+
+....
+rhoas kafka list [flags]
+....
+
+[discrete]
+== Options
+
+      `--limit` _int_::         The maximum number of Kafka instances to be returned (default 100)
+  `-o`, `--output` _string_::   Format in which to display the Kafka instances (choose from: "json", "yml", "yaml")
+      `--page` _int_::          Display the Kafka instances from the specified page number
+      `--search` _string_::     Text search to filter the Kafka instances by name, owner, cloud_provider, region and status
+
+[discrete]
+== Options inherited from parent commands
+
+  `-h`, `--help`::      Show help for a command
+  `-v`, `--verbose`::   Enable verbose mode
+      `--version`::     Show rhoas version
+
+[discrete]
+== See also
+
+
+ifdef::env-github,env-browser[]
+* link:rhoas_kafka.adoc#rhoas-kafka[rhoas kafka]	 - Create, view, use, and manage your Apache Kafka instances
+endif::[]
+ifdef::pantheonenv[]
+* link:{path}#ref-rhoas-kafka_{context}[rhoas kafka]	 - Create, view, use, and manage your Apache Kafka instances
+endif::[]
+

@@ -1,0 +1,67 @@
+ifdef::env-github,env-browser[:context: cmd]
+[id='ref-rhoas-cluster-connect_{context}']
+= rhoas cluster connect
+
+[role="_abstract"]
+Connect your services to Kubernetes or OpenShift
+
+[discrete]
+== Synopsis
+
+Connect your application services to your Kubernetes or OpenShift cluster.
+The kubeconfig file is used to connect to the cluster and identify the context.
+Alternatively, you can use the KUBECONFIG environment variable to read your configuration.
+
+NOTE: This command requires the RHOAS operator to be running on your cluster.
+
+This command will:
+
+1. Create a service account and mount it as a secret into your cluster.
+If the cluster has a service account, it will be refreshed.
+
+2. Create a Kafka Request object that can be used to create a ServiceBinding object using
+the Service Binding operator (https://github.com/redhat-developer/service-binding-operator).
+
+
+
+....
+rhoas cluster connect [flags]
+....
+
+[discrete]
+== Examples
+
+....
+# connect the current Kafka instance to your cluster
+$ rhoas cluster connect
+
+....
+
+[discrete]
+== Options
+
+      `--ignore-context`::         Ignore currently selected services and ask to select each service separately
+      `--kubeconfig` _string_::    Location of the kubeconfig file
+  `-n`, `--namespace` _string_::   Custom Kubernetes namespace (if not set current namespace will be used)
+      `--token` _string_::         Provide an offline token to be used by the operator (to get a token, visit https://console.redhat.com/openshift/token)
+
+  `-y`, `--yes`::                  Forcibly create a binding without confirmation
+
+[discrete]
+== Options inherited from parent commands
+
+  `-h`, `--help`::      Show help for a command
+  `-v`, `--verbose`::   Enable verbose mode
+      `--version`::     Show rhoas version
+
+[discrete]
+== See also
+
+
+ifdef::env-github,env-browser[]
+* link:rhoas_cluster.adoc#rhoas-cluster[rhoas cluster]	 - View and perform operations on your Kubernetes or OpenShift cluster
+endif::[]
+ifdef::pantheonenv[]
+* link:{path}#ref-rhoas-cluster_{context}[rhoas cluster]	 - View and perform operations on your Kubernetes or OpenShift cluster
+endif::[]
+

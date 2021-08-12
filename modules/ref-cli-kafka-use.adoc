@@ -1,0 +1,53 @@
+ifdef::env-github,env-browser[:context: cmd]
+[id='ref-rhoas-kafka-use_{context}']
+= rhoas kafka use
+
+[role="_abstract"]
+Set the current Apache Kafka instance
+
+[discrete]
+== Synopsis
+
+Select an Apache Kafka instance and set it as the current instance.
+
+When you set the Kafka instance to be used, it is set as the current instance for all "rhoas kafka" commands.
+
+When an ID is not specified in other Kafka commands, the current Kafka instance is used.
+
+
+....
+rhoas kafka use [flags]
+....
+
+[discrete]
+== Examples
+
+....
+# set a kafka instance to be the current instance
+$ rhoas kafka use --id=1iSY6RQ3JKI8Q0OTmjQFd3ocFRg,
+
+....
+
+[discrete]
+== Options
+
+      `--id` _string_::   Unique ID of the Kafka instance you want to set as the current instance
+
+[discrete]
+== Options inherited from parent commands
+
+  `-h`, `--help`::      Show help for a command
+  `-v`, `--verbose`::   Enable verbose mode
+      `--version`::     Show rhoas version
+
+[discrete]
+== See also
+
+
+ifdef::env-github,env-browser[]
+* link:rhoas_kafka.adoc#rhoas-kafka[rhoas kafka]	 - Create, view, use, and manage your Apache Kafka instances
+endif::[]
+ifdef::pantheonenv[]
+* link:{path}#ref-rhoas-kafka_{context}[rhoas kafka]	 - Create, view, use, and manage your Apache Kafka instances
+endif::[]
+

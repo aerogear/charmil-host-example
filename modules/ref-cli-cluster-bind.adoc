@@ -1,0 +1,69 @@
+ifdef::env-github,env-browser[:context: cmd]
+[id='ref-rhoas-cluster-bind_{context}']
+= rhoas cluster bind
+
+[role="_abstract"]
+Connect your RHOAS services to Kubernetes or OpenShift applications
+
+[discrete]
+== Synopsis
+
+Command allows you to connect services created by connect command to your application
+running on OpenShift or Kubernetes platform.
+Bind will scan your namespace and detect all application deployments that you can connect your
+services with.
+
+Bind command detects Kubernetes deployments and inject managed services credentials to them.
+For information about what credentials are injected please refer to individual services
+Command will inject credentials as files into `/bindings` folder inside your application.
+
+Bind command will create volume inside your deployment or
+ServiceBindingOperator resource if you have it installed on your cluster
+
+
+....
+rhoas cluster bind [flags]
+....
+
+[discrete]
+== Examples
+
+....
+# Bind using interactive mode
+$ rhoas cluster bind
+
+# Bind to specific namespace and application
+$ rhoas cluster bind --namespace=ns --app-name=myapp
+
+....
+
+[discrete]
+== Options
+
+      `--app-name` _string_::       Name of the kubernetes deployment to bind
+      `--binding-name` _string_::   Name of the Service binding object to create when using operator
+      `--force-operator`::          Use ServiceBindingOperator only and fail if Operator is not installed
+      `--force-sdk`::               Use Service Binding SDK and skip ServiceBindingOperator even if installed on the cluster
+      `--ignore-context`::          Ignore currently selected services and ask to select each service separately
+      `--kubeconfig` _string_::     Location of the kubeconfig file
+  `-n`, `--namespace` _string_::    Custom Kubernetes namespace (if not set current namespace will be used)
+  `-y`, `--yes`::                   Forcibly create a binding without confirmation
+
+[discrete]
+== Options inherited from parent commands
+
+  `-h`, `--help`::      Show help for a command
+  `-v`, `--verbose`::   Enable verbose mode
+      `--version`::     Show rhoas version
+
+[discrete]
+== See also
+
+
+ifdef::env-github,env-browser[]
+* link:rhoas_cluster.adoc#rhoas-cluster[rhoas cluster]	 - View and perform operations on your Kubernetes or OpenShift cluster
+endif::[]
+ifdef::pantheonenv[]
+* link:{path}#ref-rhoas-cluster_{context}[rhoas cluster]	 - View and perform operations on your Kubernetes or OpenShift cluster
+endif::[]
+
