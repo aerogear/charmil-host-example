@@ -5,8 +5,6 @@ import (
 
 	"github.com/aerogear/charmil-host-example/pkg/cmd/config"
 
-	"github.com/aerogear/charmil-host-example/pkg/cmd/registry"
-
 	"github.com/aerogear/charmil-host-example/pkg/cmd/login"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/status"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/whoami"
@@ -58,7 +56,7 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 	cmd.AddCommand(config.NewConfigCommand(f))
 
 	// Early stage/dev preview commands
-	cmd.AddCommand(registry.NewServiceRegistryCommand(f))
+	// cmd.AddCommand(registry.NewServiceRegistryCommand(f))
 
 	return cmd
 }
