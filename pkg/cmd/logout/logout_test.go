@@ -7,6 +7,8 @@ import (
 	"testing"
 
 	"github.com/aerogear/charmil-host-example/pkg/connection"
+	"github.com/aerogear/charmil-host-example/pkg/localesettings"
+	"golang.org/x/text/language"
 
 	"github.com/aerogear/charmil-host-example/internal/mockutil"
 
@@ -20,7 +22,14 @@ import (
 )
 
 func TestNewLogoutCommand(t *testing.T) {
-	localizer, _ := localize.New(nil)
+
+	locConfig := &localize.Config{
+		Language: &language.English,
+		Files:    localesettings.DefaultLocales,
+		Format:   "toml",
+	}
+
+	localizer, _ := localize.New(locConfig)
 
 	type args struct {
 		cfg        *config.Config

@@ -3,14 +3,22 @@ package kafka
 import (
 	"testing"
 
+	"github.com/aerogear/charmil-host-example/pkg/localesettings"
 	"github.com/aerogear/charmil/core/utils/localize"
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
+	"golang.org/x/text/language"
 )
 
 var validator *Validator
 
 func init() {
-	localizer, _ := localize.New(nil)
+	locConfig := &localize.Config{
+		Language: &language.English,
+		Files:    localesettings.DefaultLocales,
+		Format:   "toml",
+	}
+
+	localizer, _ := localize.New(locConfig)
 
 	validator = &Validator{
 		Localizer: localizer,

@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
-	"embed"
 	"fmt"
 	"os"
 
 	"github.com/aerogear/charmil-host-example/pkg/doc"
+	"github.com/aerogear/charmil-host-example/pkg/localesettings"
 	"github.com/aerogear/charmil/core/utils/localize"
 	"golang.org/x/text/language"
 
@@ -20,17 +20,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Stores embedded contents of all the locales files
-//go:embed locales/*
-var defaultLocales embed.FS
-
 var generateDocs = os.Getenv("GENERATE_DOCS") == "true"
 
 func main() {
 
 	locConfig := &localize.Config{
 		Language: &language.English,
-		Files:    defaultLocales,
+		Files:    localesettings.DefaultLocales,
 		Format:   "toml",
 	}
 
