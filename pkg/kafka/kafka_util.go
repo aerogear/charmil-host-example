@@ -11,7 +11,7 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/common/commonerr"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil-host-example/pkg/kafka/kafkaerr"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/localize"
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 )
 
@@ -35,7 +35,7 @@ func (v *Validator) ValidateName(val interface{}) error {
 	}
 
 	if len(name) < 1 || len(name) > 32 {
-		return errors.New(v.Localizer.MustLocalize("kafka.validation.name.error.lengthError"))
+		return errors.New(v.Localizer.LocalizeByID("kafka.validation.name.error.lengthError"))
 	}
 
 	matched := validNameRegexp.MatchString(name)
@@ -107,7 +107,7 @@ func (v *Validator) ValidateNameIsAvailable(val interface{}) error {
 	_, httpRes, _ := GetKafkaByName(context.Background(), api.Kafka(), name)
 
 	if httpRes != nil && httpRes.StatusCode == 200 {
-		return errors.New(v.Localizer.MustLocalize("kafka.create.error.conflictError", localize.NewEntry("Name", name)))
+		return errors.New(v.Localizer.LocalizeByID("kafka.create.error.conflictError", localize.NewEntry("Name", name)))
 	}
 
 	if httpRes != nil && httpRes.Body != nil {

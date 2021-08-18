@@ -36,26 +36,26 @@ func DevPreviewEnabled(f *factory.Factory) bool {
 func EnableDevPreview(f *factory.Factory, enablement bool) (*config.Config, error) {
 	logger, err := f.Logger()
 	if err != nil {
-		logger.Info(f.Localizer.MustLocalize("profile.error.enablement"), err)
+		logger.Info(f.Localizer.LocalizeByID("profile.error.enablement"), err)
 		return nil, err
 	}
 
 	config, err := f.Config.Load()
 	if err != nil {
-		logger.Info(f.Localizer.MustLocalize("profile.error.enablement"), err)
+		logger.Info(f.Localizer.LocalizeByID("profile.error.enablement"), err)
 		return nil, err
 	}
 
 	config.DevPreviewEnabled = enablement
 	err = f.Config.Save(config)
 	if err != nil {
-		logger.Info(f.Localizer.MustLocalize("profile.error.enablement"), err)
+		logger.Info(f.Localizer.LocalizeByID("profile.error.enablement"), err)
 		return nil, err
 	}
 	if config.DevPreviewEnabled {
-		logger.Info(f.Localizer.MustLocalize("profile.status.devpreview.enabled"))
+		logger.Info(f.Localizer.LocalizeByID("profile.status.devpreview.enabled"))
 	} else {
-		logger.Info(f.Localizer.MustLocalize("profile.status.devpreview.disabled"))
+		logger.Info(f.Localizer.LocalizeByID("profile.status.devpreview.disabled"))
 	}
 	return config, err
 }

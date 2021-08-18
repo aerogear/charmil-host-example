@@ -9,11 +9,12 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/flag"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	"github.com/aerogear/charmil-host-example/pkg/serviceaccount/validation"
+	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -38,10 +39,10 @@ func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:     opts.localizer.MustLocalize("serviceAccount.delete.cmd.use"),
-		Short:   opts.localizer.MustLocalize("serviceAccount.delete.cmd.shortDescription"),
-		Long:    opts.localizer.MustLocalize("serviceAccount.delete.cmd.longDescription"),
-		Example: opts.localizer.MustLocalize("serviceAccount.delete.cmd.example"),
+		Use:     opts.localizer.LocalizeByID("serviceAccount.delete.cmd.use"),
+		Short:   opts.localizer.LocalizeByID("serviceAccount.delete.cmd.shortDescription"),
+		Long:    opts.localizer.LocalizeByID("serviceAccount.delete.cmd.longDescription"),
+		Example: opts.localizer.LocalizeByID("serviceAccount.delete.cmd.example"),
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			if !opts.IO.CanPrompt() && !opts.force {
@@ -61,8 +62,8 @@ func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.MustLocalize("serviceAccount.delete.flag.id.description"))
-	cmd.Flags().BoolVarP(&opts.force, "yes", "y", false, opts.localizer.MustLocalize("serviceAccount.delete.flag.yes.description"))
+	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.LocalizeByID("serviceAccount.delete.flag.id.description"))
+	cmd.Flags().BoolVarP(&opts.force, "yes", "y", false, opts.localizer.LocalizeByID("serviceAccount.delete.flag.yes.description"))
 
 	_ = cmd.MarkFlagRequired("id")
 
@@ -87,14 +88,14 @@ func runDelete(opts *Options) (err error) {
 		}
 
 		if httpRes.StatusCode == 404 {
-			return errors.New(opts.localizer.MustLocalize("serviceAccount.common.error.notFoundError", localize.NewEntry("ID", opts.id)))
+			return errors.New(opts.localizer.LocalizeByID("serviceAccount.common.error.notFoundError", localize.NewEntry("ID", opts.id)))
 		}
 	}
 
 	if !opts.force {
 		var confirmDelete bool
 		promptConfirmDelete := &survey.Confirm{
-			Message: opts.localizer.MustLocalize("serviceAccount.delete.input.confirmDelete.message", localize.NewEntry("ID", opts.id)),
+			Message: opts.localizer.LocalizeByID("serviceAccount.delete.input.confirmDelete.message", localize.NewEntry("ID", opts.id)),
 		}
 
 		err = survey.AskOne(promptConfirmDelete, &confirmDelete)
@@ -103,7 +104,7 @@ func runDelete(opts *Options) (err error) {
 		}
 
 		if !confirmDelete {
-			logger.Debug(opts.localizer.MustLocalize("serviceAccount.delete.log.debug.deleteNotConfirmed"))
+			logger.Infoln(opts.localizer.LocalizeByID("serviceAccount.delete.log.debug.deleteNotConfirmed"))
 			return nil
 		}
 	}
@@ -130,15 +131,15 @@ func deleteServiceAccount(opts *Options) error {
 
 		switch httpRes.StatusCode {
 		case 403:
-			return errors.New(opts.localizer.MustLocalize("serviceAccount.common.error.forbidden", localize.NewEntry("Operation", "delete")))
+			return errors.New(opts.localizer.LocalizeByID("serviceAccount.common.error.forbidden", localize.NewEntry("Operation", "delete")))
 		case 500:
-			return errors.New(opts.localizer.MustLocalize("serviceAccount.common.error.internalServerError"))
+			return errors.New(opts.localizer.LocalizeByID("serviceAccount.common.error.internalServerError"))
 		default:
 			return err
 		}
 	}
 
-	logger.Info(opts.localizer.MustLocalize("serviceAccount.delete.log.info.deleteSuccess"))
+	logger.Info(opts.localizer.LocalizeByID("serviceAccount.delete.log.info.deleteSuccess"))
 
 	return nil
 }

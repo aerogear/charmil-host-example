@@ -8,19 +8,20 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/flag"
 	flagutil "github.com/aerogear/charmil-host-example/pkg/cmdutil/flags"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/localize"
 
 	"github.com/aerogear/charmil-host-example/pkg/cmdutil/flags"
 
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/dump"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	pkgStatus "github.com/aerogear/charmil-host-example/pkg/status"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 const (
@@ -51,17 +52,17 @@ func NewStatusCommand(f *factory.Factory) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:       opts.localizer.MustLocalize("status.cmd.use"),
-		Short:     opts.localizer.MustLocalize("status.cmd.shortDescription"),
-		Long:      opts.localizer.MustLocalize("status.cmd.longDescription"),
-		Example:   opts.localizer.MustLocalize("status.cmd.example"),
+		Use:       opts.localizer.LocalizeByID("status.cmd.use"),
+		Short:     opts.localizer.LocalizeByID("status.cmd.shortDescription"),
+		Long:      opts.localizer.LocalizeByID("status.cmd.longDescription"),
+		Example:   opts.localizer.LocalizeByID("status.cmd.example"),
 		ValidArgs: validServices,
 		Args:      cobra.RangeArgs(0, len(validServices)),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) > 0 {
 				for _, s := range args {
 					if !flags.IsValidInput(s, validServices...) {
-						return errors.New(opts.localizer.MustLocalize("status.error.args.error.unknownServiceError", localize.NewEntry("ServiceName", s)))
+						return errors.New(opts.localizer.LocalizeByID("status.error.args.error.unknownServiceError", localize.NewEntry("ServiceName", s)))
 					}
 				}
 
@@ -77,7 +78,7 @@ func NewStatusCommand(f *factory.Factory) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "", opts.localizer.MustLocalize("status.flag.output.description"))
+	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "", opts.localizer.LocalizeByID("status.flag.output.description"))
 
 	flagutil.EnableOutputFlagCompletion(cmd)
 
@@ -103,7 +104,7 @@ func runStatus(opts *Options) error {
 	}
 
 	if len(opts.services) > 0 {
-		logger.Debug(opts.localizer.MustLocalize("status.log.debug.requestingStatusOfServices"), opts.services)
+		logger.Infoln(opts.localizer.LocalizeByID("status.log.debug.requestingStatusOfServices"), opts.services)
 	}
 
 	status, ok, err := pkgStatus.Get(context.Background(), pkgOpts)
@@ -113,7 +114,7 @@ func runStatus(opts *Options) error {
 
 	if !ok {
 		logger.Info("")
-		logger.Info(opts.localizer.MustLocalize("status.log.info.noStatusesAreUsed"))
+		logger.Info(opts.localizer.LocalizeByID("status.log.info.noStatusesAreUsed"))
 		return nil
 	}
 

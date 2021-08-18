@@ -9,13 +9,21 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/internal/mockutil"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
-	"github.com/aerogear/charmil-host-example/pkg/localize/goi18n"
+	"github.com/aerogear/charmil-host-example/pkg/localesettings"
+	"github.com/aerogear/charmil/core/utils/localize"
 	"github.com/aerogear/charmil/validator"
 	"github.com/aerogear/charmil/validator/rules"
+	"golang.org/x/text/language"
 )
 
 func Test_ValidateCommandsUsingCharmilValidator(t *testing.T) {
-	localizer, err := goi18n.New(nil)
+	locConfig := &localize.Config{
+		Language: &language.English,
+		Files:    localesettings.DefaultLocales,
+		Format:   "toml",
+	}
+
+	localizer, err := localize.New(locConfig)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

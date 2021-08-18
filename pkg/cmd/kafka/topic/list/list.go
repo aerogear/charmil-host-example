@@ -8,7 +8,7 @@ import (
 
 	"github.com/aerogear/charmil-host-example/pkg/cmdutil"
 	topicutil "github.com/aerogear/charmil-host-example/pkg/kafka/topic"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/localize"
 
 	"github.com/aerogear/charmil-host-example/pkg/cmd/flag"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
@@ -22,9 +22,10 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/dump"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -59,10 +60,10 @@ func NewListTopicCommand(f *factory.Factory) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:     opts.localizer.MustLocalize("kafka.topic.list.cmd.use"),
-		Short:   opts.localizer.MustLocalize("kafka.topic.list.cmd.shortDescription"),
-		Long:    opts.localizer.MustLocalize("kafka.topic.list.cmd.longDescription"),
-		Example: opts.localizer.MustLocalize("kafka.topic.list.cmd.example"),
+		Use:     opts.localizer.LocalizeByID("kafka.topic.list.cmd.use"),
+		Short:   opts.localizer.LocalizeByID("kafka.topic.list.cmd.shortDescription"),
+		Long:    opts.localizer.LocalizeByID("kafka.topic.list.cmd.longDescription"),
+		Example: opts.localizer.LocalizeByID("kafka.topic.list.cmd.example"),
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			if opts.output != "" {
@@ -72,11 +73,11 @@ func NewListTopicCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			if opts.page < 1 {
-				return errors.New(opts.localizer.MustLocalize("kafka.common.page.error.invalid.minValue", localize.NewEntry("Page", opts.page)))
+				return errors.New(opts.localizer.LocalizeByID("kafka.common.page.error.invalid.minValue", localize.NewEntry("Page", opts.page)))
 			}
 
 			if opts.size < 1 {
-				return errors.New(opts.localizer.MustLocalize("kafka.common.size.error.invalid.minValue", localize.NewEntry("Size", opts.size)))
+				return errors.New(opts.localizer.LocalizeByID("kafka.common.size.error.invalid.minValue", localize.NewEntry("Size", opts.size)))
 			}
 
 			if opts.search != "" {
@@ -94,7 +95,7 @@ func NewListTopicCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			if !cfg.HasKafka() {
-				return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.noKafkaSelected"))
+				return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.noKafkaSelected"))
 			}
 
 			opts.kafkaID = cfg.Services.Kafka.ClusterID
@@ -103,10 +104,10 @@ func NewListTopicCommand(f *factory.Factory) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.output, "output", "o", "", opts.localizer.MustLocalize("kafka.topic.list.flag.output.description"))
-	cmd.Flags().StringVarP(&opts.search, "search", "", "", opts.localizer.MustLocalize("kafka.topic.list.flag.search.description"))
-	cmd.Flags().Int32VarP(&opts.page, "page", "", int32(cmdutil.DefaultPageNumber), opts.localizer.MustLocalize("kafka.topic.list.flag.page.description"))
-	cmd.Flags().Int32VarP(&opts.size, "size", "", int32(cmdutil.DefaultPageSize), opts.localizer.MustLocalize("kafka.topic.list.flag.size.description"))
+	cmd.Flags().StringVarP(&opts.output, "output", "o", "", opts.localizer.LocalizeByID("kafka.topic.list.flag.output.description"))
+	cmd.Flags().StringVarP(&opts.search, "search", "", "", opts.localizer.LocalizeByID("kafka.topic.list.flag.search.description"))
+	cmd.Flags().Int32VarP(&opts.page, "page", "", int32(cmdutil.DefaultPageNumber), opts.localizer.LocalizeByID("kafka.topic.list.flag.page.description"))
+	cmd.Flags().Int32VarP(&opts.size, "size", "", int32(cmdutil.DefaultPageSize), opts.localizer.LocalizeByID("kafka.topic.list.flag.size.description"))
 
 	flagutil.EnableOutputFlagCompletion(cmd)
 
@@ -132,7 +133,7 @@ func runCmd(opts *Options) error {
 	a := api.TopicsApi.GetTopics(context.Background())
 
 	if opts.search != "" {
-		logger.Debug(opts.localizer.MustLocalize("kafka.topic.list.log.debug.filteringTopicList", localize.NewEntry("Search", opts.search)))
+		logger.Infoln(opts.localizer.LocalizeByID("kafka.topic.list.log.debug.filteringTopicList", localize.NewEntry("Search", opts.search)))
 		a = a.Filter(opts.search)
 	}
 
@@ -150,13 +151,13 @@ func runCmd(opts *Options) error {
 
 		switch httpRes.StatusCode {
 		case http.StatusUnauthorized:
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.list.error.unauthorized", operationTemplatePair))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.list.error.unauthorized", operationTemplatePair))
 		case http.StatusForbidden:
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.list.error.forbidden", operationTemplatePair))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.list.error.forbidden", operationTemplatePair))
 		case http.StatusInternalServerError:
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.internalServerError"))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.internalServerError"))
 		case http.StatusServiceUnavailable:
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.unableToConnectToKafka", localize.NewEntry("Name", kafkaInstance.GetName())))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.unableToConnectToKafka", localize.NewEntry("Name", kafkaInstance.GetName())))
 		default:
 			return err
 		}
@@ -165,7 +166,7 @@ func runCmd(opts *Options) error {
 	defer httpRes.Body.Close()
 
 	if topicData.GetTotal() == 0 && opts.output == "" {
-		logger.Info(opts.localizer.MustLocalize("kafka.topic.list.log.info.noTopics", localize.NewEntry("InstanceName", kafkaInstance.GetName())))
+		logger.Info(opts.localizer.LocalizeByID("kafka.topic.list.log.info.noTopics", localize.NewEntry("InstanceName", kafkaInstance.GetName())))
 
 		return nil
 	}

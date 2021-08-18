@@ -7,11 +7,12 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/auth/token"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
 
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -32,10 +33,10 @@ func NewWhoAmICmd(f *factory.Factory) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:     f.Localizer.MustLocalize("whoami.cmd.use"),
-		Short:   f.Localizer.MustLocalize("whoami.cmd.shortDescription"),
-		Long:    f.Localizer.MustLocalize("whoami.cmd.longDescription"),
-		Example: f.Localizer.MustLocalize("whoami.cmd.example"),
+		Use:     f.Localizer.LocalizeByID("whoami.cmd.use"),
+		Short:   f.Localizer.LocalizeByID("whoami.cmd.shortDescription"),
+		Long:    f.Localizer.LocalizeByID("whoami.cmd.longDescription"),
+		Example: f.Localizer.LocalizeByID("whoami.cmd.example"),
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			return runCmd(opts)
@@ -70,7 +71,7 @@ func runCmd(opts *Options) (err error) {
 	if ok {
 		fmt.Fprintln(opts.IO.Out, userName)
 	} else {
-		logger.Info(opts.localizer.MustLocalize("whoami.log.info.tokenHasNoUsername"))
+		logger.Info(opts.localizer.LocalizeByID("whoami.log.info.tokenHasNoUsername"))
 	}
 
 	return nil

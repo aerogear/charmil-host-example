@@ -10,7 +10,7 @@ import (
 
 	"github.com/aerogear/charmil-host-example/pkg/cmdutil"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/localize"
 
 	flagutil "github.com/aerogear/charmil-host-example/pkg/cmdutil/flags"
 	topicutil "github.com/aerogear/charmil-host-example/pkg/kafka/topic"
@@ -18,15 +18,16 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/flag"
 
 	"github.com/aerogear/charmil-host-example/pkg/dump"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 	kafkainstanceclient "github.com/redhat-developer/app-services-sdk-go/kafkainstance/apiv1internal/client"
 	"gopkg.in/yaml.v2"
 
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 var (
@@ -64,10 +65,10 @@ func NewUpdateTopicCommand(f *factory.Factory) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:     opts.localizer.MustLocalize("kafka.topic.update.cmd.use"),
-		Short:   opts.localizer.MustLocalize("kafka.topic.update.cmd.shortDescription"),
-		Long:    opts.localizer.MustLocalize("kafka.topic.update.cmd.longDescription"),
-		Example: opts.localizer.MustLocalize("kafka.topic.update.cmd.example"),
+		Use:     opts.localizer.LocalizeByID("kafka.topic.update.cmd.use"),
+		Short:   opts.localizer.LocalizeByID("kafka.topic.update.cmd.shortDescription"),
+		Long:    opts.localizer.LocalizeByID("kafka.topic.update.cmd.longDescription"),
+		Example: opts.localizer.LocalizeByID("kafka.topic.update.cmd.example"),
 		Args:    cobra.ExactValidArgs(1),
 		// Dynamic completion of the topic name
 		ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
@@ -79,7 +80,7 @@ func NewUpdateTopicCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			if !opts.IO.CanPrompt() && opts.retentionMsStr == "" && opts.partitionsStr == "" && opts.retentionBytesStr == "" {
-				return errors.New(opts.localizer.MustLocalize("argument.error.requiredWhenNonInteractive", localize.NewEntry("Argument", "name")))
+				return errors.New(opts.localizer.LocalizeByID("argument.error.requiredWhenNonInteractive", localize.NewEntry("Argument", "name")))
 			} else if opts.retentionMsStr == "" && opts.partitionsStr == "" && opts.retentionBytesStr == "" && opts.cleanupPolicy == "" {
 				opts.interactive = true
 			}
@@ -95,7 +96,7 @@ func NewUpdateTopicCommand(f *factory.Factory) *cobra.Command {
 				}
 
 				if opts.retentionMsStr == "" && opts.partitionsStr == "" && opts.retentionBytesStr == "" && opts.cleanupPolicy == "" {
-					logger.Info(opts.localizer.MustLocalize("kafka.topic.update.log.info.nothingToUpdate"))
+					logger.Info(opts.localizer.LocalizeByID("kafka.topic.update.log.info.nothingToUpdate"))
 					return nil
 				}
 
@@ -158,7 +159,7 @@ func NewUpdateTopicCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			if !cfg.HasKafka() {
-				return opts.localizer.MustLocalizeError("kafka.topic.common.error.noKafkaSelected")
+				return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.noKafkaSelected"))
 			}
 
 			opts.kafkaID = cfg.Services.Kafka.ClusterID
@@ -167,11 +168,11 @@ func NewUpdateTopicCommand(f *factory.Factory) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.MustLocalize("kafka.topic.common.flag.output.description"))
-	cmd.Flags().StringVar(&opts.retentionMsStr, "retention-ms", "", opts.localizer.MustLocalize("kafka.topic.common.input.retentionMs.description"))
-	cmd.Flags().StringVar(&opts.retentionBytesStr, "retention-bytes", "", opts.localizer.MustLocalize("kafka.topic.common.input.retentionBytes.description"))
-	cmd.Flags().StringVar(&opts.cleanupPolicy, "cleanup-policy", "", opts.localizer.MustLocalize("kafka.topic.common.input.cleanupPolicy.description"))
-	cmd.Flags().StringVar(&opts.partitionsStr, "partitions", "", opts.localizer.MustLocalize("kafka.topic.common.input.partitions.description"))
+	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.LocalizeByID("kafka.topic.common.flag.output.description"))
+	cmd.Flags().StringVar(&opts.retentionMsStr, "retention-ms", "", opts.localizer.LocalizeByID("kafka.topic.common.input.retentionMs.description"))
+	cmd.Flags().StringVar(&opts.retentionBytesStr, "retention-bytes", "", opts.localizer.LocalizeByID("kafka.topic.common.input.retentionBytes.description"))
+	cmd.Flags().StringVar(&opts.cleanupPolicy, "cleanup-policy", "", opts.localizer.LocalizeByID("kafka.topic.common.input.cleanupPolicy.description"))
+	cmd.Flags().StringVar(&opts.partitionsStr, "partitions", "", opts.localizer.LocalizeByID("kafka.topic.common.input.partitions.description"))
 
 	flagutil.EnableOutputFlagCompletion(cmd)
 
@@ -238,7 +239,7 @@ func runCmd(opts *Options) error {
 			return err
 		}
 		if httpRes.StatusCode == 404 {
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.topicNotFoundError", topicNameTmplPair, kafkaNameTmplPair))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.topicNotFoundError", topicNameTmplPair, kafkaNameTmplPair))
 		}
 	}
 
@@ -270,7 +271,7 @@ func runCmd(opts *Options) error {
 	}
 
 	if !needsUpdate {
-		logger.Info(opts.localizer.MustLocalize("kafka.topic.update.log.info.nothingToUpdate"))
+		logger.Info(opts.localizer.LocalizeByID("kafka.topic.update.log.info.nothingToUpdate"))
 		return nil
 	}
 
@@ -292,21 +293,21 @@ func runCmd(opts *Options) error {
 		operationTmplPair := localize.NewEntry("Operation", "update")
 		switch httpRes.StatusCode {
 		case 404:
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.notFoundError", topicNameTmplPair, kafkaNameTmplPair))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.notFoundError", topicNameTmplPair, kafkaNameTmplPair))
 		case 401:
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.unauthorized", operationTmplPair))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.unauthorized", operationTmplPair))
 		case 403:
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.forbidden", operationTmplPair))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.forbidden", operationTmplPair))
 		case 500:
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.internalServerError"))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.internalServerError"))
 		case 503:
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.unableToConnectToKafka", localize.NewEntry("Name", kafkaInstance.GetName())))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.unableToConnectToKafka", localize.NewEntry("Name", kafkaInstance.GetName())))
 		default:
 			return err
 		}
 	}
 
-	logger.Info(opts.localizer.MustLocalize("kafka.topic.update.log.info.topicUpdated", topicNameTmplPair, kafkaNameTmplPair))
+	logger.Info(opts.localizer.LocalizeByID("kafka.topic.update.log.info.topicUpdated", topicNameTmplPair, kafkaNameTmplPair))
 
 	switch opts.outputFormat {
 	case dump.JSONFormat:
@@ -342,7 +343,7 @@ func runInteractivePrompt(opts *Options) (err error) {
 			return err
 		}
 		if httpRes.StatusCode == 404 {
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.topicNotFoundError", topicNameTmplPair, kafkaNameTmplPair))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.topicNotFoundError", topicNameTmplPair, kafkaNameTmplPair))
 		}
 	}
 
@@ -355,11 +356,11 @@ func runInteractivePrompt(opts *Options) (err error) {
 		Localizer: opts.localizer,
 	}
 
-	logger.Debug(opts.localizer.MustLocalize("common.log.debug.startingInteractivePrompt"))
+	logger.Infoln(opts.localizer.LocalizeByID("common.log.debug.startingInteractivePrompt"))
 
 	partitionsPrompt := &survey.Input{
-		Message: opts.localizer.MustLocalize("kafka.topic.update.input.partitions.message"),
-		Help:    opts.localizer.MustLocalize("kafka.topic.update.input.partitions.help"),
+		Message: opts.localizer.LocalizeByID("kafka.topic.update.input.partitions.message"),
+		Help:    opts.localizer.LocalizeByID("kafka.topic.update.input.partitions.help"),
 	}
 
 	validator.CurPartitions = len(*topic.Partitions)
@@ -370,8 +371,8 @@ func runInteractivePrompt(opts *Options) (err error) {
 	}
 
 	retentionMsPrompt := &survey.Input{
-		Message: opts.localizer.MustLocalize("kafka.topic.update.input.retentionMs.message"),
-		Help:    opts.localizer.MustLocalize("kafka.topic.update.input.retentionMs.help"),
+		Message: opts.localizer.LocalizeByID("kafka.topic.update.input.retentionMs.message"),
+		Help:    opts.localizer.LocalizeByID("kafka.topic.update.input.retentionMs.help"),
 	}
 
 	err = survey.AskOne(retentionMsPrompt, &opts.retentionMsStr, survey.WithValidator(validator.ValidateMessageRetentionPeriod))
@@ -380,8 +381,8 @@ func runInteractivePrompt(opts *Options) (err error) {
 	}
 
 	retentionBytesPrompt := &survey.Input{
-		Message: opts.localizer.MustLocalize("kafka.topic.update.input.retentionBytes.message"),
-		Help:    opts.localizer.MustLocalize("kafka.topic.update.input.retentionBytes.help"),
+		Message: opts.localizer.LocalizeByID("kafka.topic.update.input.retentionBytes.message"),
+		Help:    opts.localizer.LocalizeByID("kafka.topic.update.input.retentionBytes.help"),
 	}
 
 	err = survey.AskOne(retentionBytesPrompt, &opts.retentionBytesStr, survey.WithValidator(validator.ValidateMessageRetentionSize))
@@ -390,8 +391,8 @@ func runInteractivePrompt(opts *Options) (err error) {
 	}
 
 	cleanupPolicyPrompt := &survey.Select{
-		Message: opts.localizer.MustLocalize("kafka.topic.update.input.cleanupPolicy.message"),
-		Help:    opts.localizer.MustLocalize("kafka.topic.update.input.cleanupPolicy.help"),
+		Message: opts.localizer.LocalizeByID("kafka.topic.update.input.cleanupPolicy.message"),
+		Help:    opts.localizer.LocalizeByID("kafka.topic.update.input.cleanupPolicy.help"),
 		Options: topicutil.ValidCleanupPolicies,
 		Default: topicutil.GetConfigValue(topic.GetConfig(), topicutil.CleanupPolicy),
 	}

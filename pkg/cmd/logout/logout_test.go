@@ -6,10 +6,9 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/aerogear/charmil-host-example/pkg/localize/goi18n"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
-
 	"github.com/aerogear/charmil-host-example/pkg/connection"
+	"github.com/aerogear/charmil-host-example/pkg/localesettings"
+	"golang.org/x/text/language"
 
 	"github.com/aerogear/charmil-host-example/internal/mockutil"
 
@@ -17,10 +16,21 @@ import (
 
 	"github.com/aerogear/charmil-host-example/pkg/auth/token"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
+
+	"github.com/aerogear/charmil/core/utils/localize"
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 func TestNewLogoutCommand(t *testing.T) {
-	localizer, _ := goi18n.New(nil)
+
+	locConfig := &localize.Config{
+		Language: &language.English,
+		Files:    localesettings.DefaultLocales,
+		Format:   "toml",
+	}
+
+	localizer, _ := localize.New(locConfig)
+
 	type args struct {
 		cfg        *config.Config
 		connection *connection.KeycloakConnection

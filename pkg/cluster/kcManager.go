@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/localize"
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -72,7 +72,7 @@ func CheckIfConnectionsExist(ctx context.Context, c *KubernetesCluster, namespac
 	}
 
 	if data.Error() == nil {
-		return fmt.Errorf("%v: %s", c.localizer.MustLocalize("cluster.kubernetes.checkIfConnectionExist.existError"), k.GetName())
+		return fmt.Errorf("%v: %s", c.localizer.LocalizeByID("cluster.kubernetes.checkIfConnectionExist.existError"), k.GetName())
 	}
 
 	return nil
@@ -83,7 +83,7 @@ func getKafkaConnectionsAPIURL(namespace string) string {
 }
 
 func watchForKafkaStatus(c *KubernetesCluster, crName string, namespace string) error {
-	c.logger.Info(c.localizer.MustLocalize("cluster.kubernetes.watchForKafkaStatus.log.info.wait"))
+	c.logger.Info(c.localizer.LocalizeByID("cluster.kubernetes.watchForKafkaStatus.log.info.wait"))
 
 	templateEntries := []*localize.TemplateEntry{
 		localize.NewEntry("Name", crName),
@@ -92,7 +92,7 @@ func watchForKafkaStatus(c *KubernetesCluster, crName string, namespace string) 
 		localize.NewEntry("Version", AKCVersion),
 		localize.NewEntry("Kind", AKCRMeta.Kind),
 	}
-	fmt.Fprint(c.io.Out, c.localizer.MustLocalize("cluster.kubernetes.watchForKafkaStatus.binding", templateEntries...))
+	fmt.Fprint(c.io.Out, c.localizer.LocalizeByID("cluster.kubernetes.watchForKafkaStatus.binding", templateEntries...))
 
 	w, err := c.dynamicClient.Resource(AKCResource).Namespace(namespace).Watch(context.TODO(), metav1.ListOptions{
 		FieldSelector: fields.OneTermEqualSelector("metadata.name", crName).String(),
@@ -118,15 +118,15 @@ func watchForKafkaStatus(c *KubernetesCluster, crName string, namespace string) 
 					for _, condition := range conditions {
 						typedCondition, ok := condition.(map[string]interface{})
 						if !ok {
-							return fmt.Errorf(c.localizer.MustLocalize("cluster.kubernetes.watchForKafkaStatus.error.format"), typedCondition)
+							return fmt.Errorf(c.localizer.LocalizeByID("cluster.kubernetes.watchForKafkaStatus.error.format"), typedCondition)
 						}
 						if typedCondition["type"].(string) == "Finished" {
 							if typedCondition["status"].(string) == "False" {
 								w.Stop()
-								return fmt.Errorf(c.localizer.MustLocalize("cluster.kubernetes.watchForKafkaStatus.error.status"), typedCondition["message"])
+								return fmt.Errorf(c.localizer.LocalizeByID("cluster.kubernetes.watchForKafkaStatus.error.status"), typedCondition["message"])
 							}
 							if typedCondition["status"].(string) == "True" {
-								c.logger.Info(c.localizer.MustLocalize("cluster.kubernetes.watchForKafkaStatus.log.info.success", localize.NewEntry("Name", crName), localize.NewEntry("Namespace", namespace)))
+								c.logger.Info(c.localizer.LocalizeByID("cluster.kubernetes.watchForKafkaStatus.log.info.success", localize.NewEntry("Name", crName), localize.NewEntry("Namespace", namespace)))
 
 								w.Stop()
 								return nil
@@ -139,7 +139,7 @@ func watchForKafkaStatus(c *KubernetesCluster, crName string, namespace string) 
 
 		case <-time.After(60 * time.Second):
 			w.Stop()
-			return fmt.Errorf(c.localizer.MustLocalize("cluster.kubernetes.watchForKafkaStatus.error.timeout"))
+			return fmt.Errorf(c.localizer.LocalizeByID("cluster.kubernetes.watchForKafkaStatus.error.timeout"))
 		}
 	}
 }

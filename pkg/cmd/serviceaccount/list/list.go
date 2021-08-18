@@ -11,12 +11,13 @@ import (
 	flagutil "github.com/aerogear/charmil-host-example/pkg/cmdutil/flags"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil-host-example/pkg/dump"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -50,10 +51,10 @@ func NewListCommand(f *factory.Factory) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:     opts.localizer.MustLocalize("serviceAccount.list.cmd.use"),
-		Short:   opts.localizer.MustLocalize("serviceAccount.list.cmd.shortDescription"),
-		Long:    opts.localizer.MustLocalize("serviceAccount.list.cmd.longDescription"),
-		Example: opts.localizer.MustLocalize("serviceAccount.list.cmd.example"),
+		Use:     opts.localizer.LocalizeByID("serviceAccount.list.cmd.use"),
+		Short:   opts.localizer.LocalizeByID("serviceAccount.list.cmd.shortDescription"),
+		Long:    opts.localizer.LocalizeByID("serviceAccount.list.cmd.longDescription"),
+		Example: opts.localizer.LocalizeByID("serviceAccount.list.cmd.example"),
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			if opts.output != "" && !flagutil.IsValidInput(opts.output, flagutil.ValidOutputFormats...) {
@@ -64,7 +65,7 @@ func NewListCommand(f *factory.Factory) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.output, "output", "o", "", opts.localizer.MustLocalize("serviceAccount.list.flag.output.description"))
+	cmd.Flags().StringVarP(&opts.output, "output", "o", "", opts.localizer.LocalizeByID("serviceAccount.list.flag.output.description"))
 
 	flagutil.EnableOutputFlagCompletion(cmd)
 
@@ -89,7 +90,7 @@ func runList(opts *Options) (err error) {
 
 	serviceaccounts := res.GetItems()
 	if len(serviceaccounts) == 0 && opts.output == "" {
-		logger.Info(opts.localizer.MustLocalize("serviceAccount.list.log.info.noneFound"))
+		logger.Info(opts.localizer.LocalizeByID("serviceAccount.list.log.info.noneFound"))
 		return nil
 	}
 

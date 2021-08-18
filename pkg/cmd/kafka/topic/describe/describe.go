@@ -7,21 +7,22 @@ import (
 
 	"github.com/aerogear/charmil-host-example/pkg/cmdutil"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/localize"
 
 	"github.com/aerogear/charmil-host-example/pkg/cmd/flag"
 
 	"github.com/aerogear/charmil-host-example/pkg/dump"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 	"gopkg.in/yaml.v2"
 
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 
 	flagutil "github.com/aerogear/charmil-host-example/pkg/cmdutil/flags"
 
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -47,10 +48,10 @@ func NewDescribeTopicCommand(f *factory.Factory) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:     opts.localizer.MustLocalize("kafka.topic.describe.cmd.use"),
-		Short:   opts.localizer.MustLocalize("kafka.topic.describe.cmd.shortDescription"),
-		Long:    opts.localizer.MustLocalize("kafka.topic.describe.cmd.longDescription"),
-		Example: opts.localizer.MustLocalize("kafka.topic.describe.cmd.example"),
+		Use:     opts.localizer.LocalizeByID("kafka.topic.describe.cmd.use"),
+		Short:   opts.localizer.LocalizeByID("kafka.topic.describe.cmd.shortDescription"),
+		Long:    opts.localizer.LocalizeByID("kafka.topic.describe.cmd.longDescription"),
+		Example: opts.localizer.LocalizeByID("kafka.topic.describe.cmd.example"),
 		Args:    cobra.ExactValidArgs(1),
 		// dynamic completion of topic names
 		ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
@@ -77,7 +78,7 @@ func NewDescribeTopicCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			if !cfg.HasKafka() {
-				return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.noKafkaSelected"))
+				return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.noKafkaSelected"))
 			}
 
 			opts.kafkaID = cfg.Services.Kafka.ClusterID
@@ -86,7 +87,7 @@ func NewDescribeTopicCommand(f *factory.Factory) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.MustLocalize("kafka.topic.common.flag.output.description"))
+	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.LocalizeByID("kafka.topic.common.flag.output.description"))
 
 	flagutil.EnableOutputFlagCompletion(cmd)
 
@@ -119,15 +120,15 @@ func runCmd(opts *Options) error {
 
 		switch httpRes.StatusCode {
 		case 404:
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.notFoundError", topicNameTmplPair, kafkaNameTmplPair))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.notFoundError", topicNameTmplPair, kafkaNameTmplPair))
 		case 401:
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.unauthorized", operationTmplPair))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.unauthorized", operationTmplPair))
 		case 403:
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.forbidden", operationTmplPair))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.forbidden", operationTmplPair))
 		case 500:
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.internalServerError"))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.internalServerError"))
 		case 503:
-			return errors.New(opts.localizer.MustLocalize("kafka.topic.common.error.unableToConnectToKafka", localize.NewEntry("Name", kafkaInstance.GetName())))
+			return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.unableToConnectToKafka", localize.NewEntry("Name", kafkaInstance.GetName())))
 		default:
 			return err
 		}

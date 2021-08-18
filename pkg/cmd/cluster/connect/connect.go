@@ -9,11 +9,12 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cluster"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/kafka"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -42,24 +43,24 @@ func NewConnectCommand(f *factory.Factory) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:     opts.localizer.MustLocalize("cluster.connect.cmd.use"),
-		Short:   opts.localizer.MustLocalize("cluster.connect.cmd.shortDescription"),
-		Long:    opts.localizer.MustLocalize("cluster.connect.cmd.longDescription"),
-		Example: opts.localizer.MustLocalize("cluster.connect.cmd.example"),
+		Use:     opts.localizer.LocalizeByID("cluster.connect.cmd.use"),
+		Short:   opts.localizer.LocalizeByID("cluster.connect.cmd.shortDescription"),
+		Long:    opts.localizer.LocalizeByID("cluster.connect.cmd.longDescription"),
+		Example: opts.localizer.LocalizeByID("cluster.connect.cmd.example"),
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			if opts.ignoreContext == true && !opts.IO.CanPrompt() {
-				return errors.New(opts.localizer.MustLocalize("flag.error.requiredWhenNonInteractive", localize.NewEntry("Flag", "ignore-context")))
+				return errors.New(opts.localizer.LocalizeByID("flag.error.requiredWhenNonInteractive", localize.NewEntry("Flag", "ignore-context")))
 			}
 			return runConnect(opts)
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.kubeconfigLocation, "kubeconfig", "", "", opts.localizer.MustLocalize("cluster.common.flag.kubeconfig.description"))
-	cmd.Flags().StringVarP(&opts.offlineAccessToken, "token", "", "", opts.localizer.MustLocalize("cluster.common.flag.offline.token.description", localize.NewEntry("OfflineTokenURL", build.OfflineTokenURL)))
-	cmd.Flags().StringVarP(&opts.namespace, "namespace", "n", "", opts.localizer.MustLocalize("cluster.common.flag.namespace.description"))
-	cmd.Flags().BoolVarP(&opts.forceCreationWithoutAsk, "yes", "y", false, opts.localizer.MustLocalize("cluster.common.flag.yes.description"))
-	cmd.Flags().BoolVarP(&opts.ignoreContext, "ignore-context", "", false, opts.localizer.MustLocalize("cluster.common.flag.ignoreContext.description"))
+	cmd.Flags().StringVarP(&opts.kubeconfigLocation, "kubeconfig", "", "", opts.localizer.LocalizeByID("cluster.common.flag.kubeconfig.description"))
+	cmd.Flags().StringVarP(&opts.offlineAccessToken, "token", "", "", opts.localizer.LocalizeByID("cluster.common.flag.offline.token.description", localize.NewEntry("OfflineTokenURL", build.OfflineTokenURL)))
+	cmd.Flags().StringVarP(&opts.namespace, "namespace", "n", "", opts.localizer.LocalizeByID("cluster.common.flag.namespace.description"))
+	cmd.Flags().BoolVarP(&opts.forceCreationWithoutAsk, "yes", "y", false, opts.localizer.LocalizeByID("cluster.common.flag.yes.description"))
+	cmd.Flags().BoolVarP(&opts.ignoreContext, "ignore-context", "", false, opts.localizer.LocalizeByID("cluster.common.flag.ignoreContext.description"))
 
 	return cmd
 }

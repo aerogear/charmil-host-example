@@ -4,20 +4,21 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aerogear/charmil-host-example/pkg/color"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
 
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cluster"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 
 	"github.com/spf13/cobra"
 
 	// Get all auth schemes
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
+
+	"github.com/aerogear/charmil/core/utils/color"
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -40,17 +41,17 @@ func NewStatusCommand(f *factory.Factory) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:     opts.localizer.MustLocalize("cluster.status.cmd.use"),
-		Short:   opts.localizer.MustLocalize("cluster.status.cmd.shortDescription"),
-		Long:    opts.localizer.MustLocalize("cluster.status.cmd.longDescription"),
-		Example: opts.localizer.MustLocalize("cluster.status.cmd.example"),
+		Use:     opts.localizer.LocalizeByID("cluster.status.cmd.use"),
+		Short:   opts.localizer.LocalizeByID("cluster.status.cmd.shortDescription"),
+		Long:    opts.localizer.LocalizeByID("cluster.status.cmd.longDescription"),
+		Example: opts.localizer.LocalizeByID("cluster.status.cmd.example"),
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			return runStatus(opts)
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.kubeconfig, "kubeconfig", "", "", opts.localizer.MustLocalize("cluster.common.flag.kubeconfig.description"))
+	cmd.Flags().StringVarP(&opts.kubeconfig, "kubeconfig", "", "", opts.localizer.LocalizeByID("cluster.common.flag.kubeconfig.description"))
 
 	return cmd
 }
@@ -75,13 +76,13 @@ func runStatus(opts *Options) error {
 	// Add versioning in future
 	isCRDInstalled, err := clusterConn.IsRhoasOperatorAvailableOnCluster(context.Background())
 	if isCRDInstalled && err != nil {
-		logger.Debug(err)
+		logger.Infoln(err)
 	}
 
 	if isCRDInstalled {
-		operatorStatus = color.Success(opts.localizer.MustLocalize("cluster.common.operatorInstalledMessage"))
+		operatorStatus = color.Success(opts.localizer.LocalizeByID("cluster.common.operatorInstalledMessage"))
 	} else {
-		operatorStatus = color.Error(opts.localizer.MustLocalize("cluster.common.operatorNotInstalledMessage"))
+		operatorStatus = color.Error(opts.localizer.LocalizeByID("cluster.common.operatorNotInstalledMessage"))
 	}
 
 	currentNamespace, err := clusterConn.CurrentNamespace()
@@ -91,7 +92,7 @@ func runStatus(opts *Options) error {
 
 	fmt.Fprintln(
 		opts.IO.Out,
-		opts.localizer.MustLocalize("cluster.status.statusMessage",
+		opts.localizer.LocalizeByID("cluster.status.statusMessage",
 			localize.NewEntry("Namespace", color.Info(currentNamespace)),
 			localize.NewEntry("OperatorStatus", operatorStatus)),
 	)

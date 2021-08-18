@@ -11,8 +11,8 @@ import (
 	flagutil "github.com/aerogear/charmil-host-example/pkg/cmdutil/flags"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil-host-example/pkg/dump"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 )
@@ -36,10 +36,10 @@ func NewDescribeCommand(f *factory.Factory) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:     opts.localizer.MustLocalize("serviceAccount.describe.cmd.use"),
-		Short:   opts.localizer.MustLocalize("serviceAccount.describe.cmd.shortDescription"),
-		Long:    opts.localizer.MustLocalize("serviceAccount.describe.cmd.longDescription"),
-		Example: opts.localizer.MustLocalize("serviceAccount.describe.cmd.example"),
+		Use:     opts.localizer.LocalizeByID("serviceAccount.describe.cmd.use"),
+		Short:   opts.localizer.LocalizeByID("serviceAccount.describe.cmd.shortDescription"),
+		Long:    opts.localizer.LocalizeByID("serviceAccount.describe.cmd.longDescription"),
+		Example: opts.localizer.LocalizeByID("serviceAccount.describe.cmd.example"),
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			validOutputFormats := flagutil.ValidOutputFormats
@@ -51,8 +51,8 @@ func NewDescribeCommand(f *factory.Factory) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.MustLocalize("serviceAccount.describe.flag.id.description"))
-	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.MustLocalize("serviceAccount.common.flag.output.description"))
+	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.LocalizeByID("serviceAccount.describe.flag.id.description"))
+	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.LocalizeByID("serviceAccount.common.flag.output.description"))
 
 	_ = cmd.MarkFlagRequired("id")
 
@@ -77,7 +77,7 @@ func runDescribe(opts *Options) error {
 
 		switch httpRes.StatusCode {
 		case 404:
-			return errors.New(opts.localizer.MustLocalize("serviceAccount.common.error.notFoundError", localize.NewEntry("ID", opts.id)))
+			return errors.New(opts.localizer.LocalizeByID("serviceAccount.common.error.notFoundError", localize.NewEntry("ID", opts.id)))
 		default:
 			return err
 		}

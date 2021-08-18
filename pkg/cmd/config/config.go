@@ -4,15 +4,16 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/aerogear/charmil-host-example/pkg/localize"
 	"github.com/aerogear/charmil-host-example/pkg/profile"
+	"github.com/aerogear/charmil/core/utils/localize"
 
 	"github.com/aerogear/charmil-host-example/internal/config"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -32,22 +33,22 @@ func NewConfigCommand(f *factory.Factory) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:     "config",
-		Short:   opts.localizer.MustLocalize("config.cmd.shortDescription"),
-		Long:    opts.localizer.MustLocalize("config.cmd.longDescription"),
-		Example: opts.localizer.MustLocalize("config.cmd.example"),
+		Short:   opts.localizer.LocalizeByID("config.cmd.shortDescription"),
+		Long:    opts.localizer.LocalizeByID("config.cmd.longDescription"),
+		Example: opts.localizer.LocalizeByID("config.cmd.example"),
 	}
 
 	devPreview := &cobra.Command{
 		Use:       "dev-preview",
-		Short:     opts.localizer.MustLocalize("devpreview.cmd.shortDescription"),
-		Long:      opts.localizer.MustLocalize("devpreview.cmd.longDescription"),
-		Example:   opts.localizer.MustLocalize("devpreview.cmd.example"),
+		Short:     opts.localizer.LocalizeByID("devpreview.cmd.shortDescription"),
+		Long:      opts.localizer.LocalizeByID("devpreview.cmd.longDescription"),
+		Example:   opts.localizer.LocalizeByID("devpreview.cmd.example"),
 		ValidArgs: []string{"true", "false"},
 		Args:      cobra.ExactValidArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			devPreview, err := strconv.ParseBool(args[0])
 			if err != nil {
-				return errors.New(opts.localizer.MustLocalize("devpreview.error.enablement"))
+				return errors.New(opts.localizer.LocalizeByID("devpreview.error.enablement"))
 			}
 			_, err = profile.EnableDevPreview(f, devPreview)
 			return err

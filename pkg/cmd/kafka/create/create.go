@@ -8,7 +8,7 @@ import (
 
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 
-	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/localize"
 
 	"github.com/aerogear/charmil-host-example/pkg/ams"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/flag"
@@ -20,9 +20,8 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/aerogear/charmil-host-example/pkg/dump"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	pkgKafka "github.com/aerogear/charmil-host-example/pkg/kafka"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
@@ -31,6 +30,8 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/kafka/flags"
 	"github.com/aerogear/charmil-host-example/pkg/cmdutil"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -71,10 +72,10 @@ func NewCreateCommand(f *factory.Factory) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:     opts.localizer.MustLocalize("kafka.create.cmd.use"),
-		Short:   opts.localizer.MustLocalize("kafka.create.cmd.shortDescription"),
-		Long:    opts.localizer.MustLocalize("kafka.create.cmd.longDescription"),
-		Example: opts.localizer.MustLocalize("kafka.create.cmd.example"),
+		Use:     opts.localizer.LocalizeByID("kafka.create.cmd.use"),
+		Short:   opts.localizer.LocalizeByID("kafka.create.cmd.shortDescription"),
+		Long:    opts.localizer.LocalizeByID("kafka.create.cmd.longDescription"),
+		Example: opts.localizer.LocalizeByID("kafka.create.cmd.example"),
 		Args:    cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) > 0 {
@@ -90,10 +91,10 @@ func NewCreateCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			if !opts.IO.CanPrompt() && opts.name == "" {
-				return errors.New(opts.localizer.MustLocalize("kafka.create.argument.name.error.requiredWhenNonInteractive"))
+				return errors.New(opts.localizer.LocalizeByID("kafka.create.argument.name.error.requiredWhenNonInteractive"))
 			} else if opts.name == "" {
 				if opts.provider != "" || opts.region != "" {
-					return errors.New(opts.localizer.MustLocalize("kafka.create.argument.name.error.requiredWhenNonInteractive"))
+					return errors.New(opts.localizer.LocalizeByID("kafka.create.argument.name.error.requiredWhenNonInteractive"))
 				}
 				opts.interactive = true
 			}
@@ -107,10 +108,10 @@ func NewCreateCommand(f *factory.Factory) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&opts.provider, flags.FlagProvider, "", opts.localizer.MustLocalize("kafka.create.flag.cloudProvider.description"))
-	cmd.Flags().StringVar(&opts.region, flags.FlagRegion, "", opts.localizer.MustLocalize("kafka.create.flag.cloudRegion.description"))
-	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.MustLocalize("kafka.common.flag.output.description"))
-	cmd.Flags().BoolVar(&opts.autoUse, "use", true, opts.localizer.MustLocalize("kafka.create.flag.autoUse.description"))
+	cmd.Flags().StringVar(&opts.provider, flags.FlagProvider, "", opts.localizer.LocalizeByID("kafka.create.flag.cloudProvider.description"))
+	cmd.Flags().StringVar(&opts.region, flags.FlagRegion, "", opts.localizer.LocalizeByID("kafka.create.flag.cloudRegion.description"))
+	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.LocalizeByID("kafka.common.flag.output.description"))
+	cmd.Flags().BoolVar(&opts.autoUse, "use", true, opts.localizer.LocalizeByID("kafka.create.flag.autoUse.description"))
 
 	_ = cmd.RegisterFlagCompletionFunc(flags.FlagProvider, func(cmd *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 		return cmdutil.FetchCloudProviders(f)
@@ -145,13 +146,13 @@ func runCreate(opts *Options) error {
 		return err
 	}
 	if !termsAccepted && termsURL != "" {
-		logger.Info(opts.localizer.MustLocalize("service.info.termsCheck", localize.NewEntry("TermsURL", termsURL)))
+		logger.Info(opts.localizer.LocalizeByID("service.info.termsCheck", localize.NewEntry("TermsURL", termsURL)))
 		return nil
 	}
 
 	var payload *kafkamgmtclient.KafkaRequestPayload
 	if opts.interactive {
-		logger.Debug()
+		logger.Infoln()
 
 		payload, err = promptKafkaPayload(opts)
 		if err != nil {
@@ -174,7 +175,7 @@ func runCreate(opts *Options) error {
 		}
 	}
 
-	logger.Info(opts.localizer.MustLocalize("kafka.create.log.info.creatingKafka", localize.NewEntry("Name", payload.Name)))
+	logger.Info(opts.localizer.LocalizeByID("kafka.create.log.info.creatingKafka", localize.NewEntry("Name", payload.Name)))
 
 	api := connection.API()
 
@@ -184,14 +185,14 @@ func runCreate(opts *Options) error {
 	response, httpRes, err := a.Execute()
 
 	if httpRes.StatusCode == 409 {
-		return errors.New(opts.localizer.MustLocalize("kafka.create.error.conflictError", localize.NewEntry("Name", payload.Name)))
+		return errors.New(opts.localizer.LocalizeByID("kafka.create.error.conflictError", localize.NewEntry("Name", payload.Name)))
 	}
 
 	if err != nil {
 		return err
 	}
 
-	logger.Info(opts.localizer.MustLocalize("kafka.create.info.successMessage", localize.NewEntry("Name", response.GetName())))
+	logger.Info(opts.localizer.LocalizeByID("kafka.create.info.successMessage", localize.NewEntry("Name", response.GetName())))
 
 	switch opts.outputFormat {
 	case dump.JSONFormat:
@@ -207,13 +208,13 @@ func runCreate(opts *Options) error {
 	}
 
 	if opts.autoUse {
-		logger.Debug("Auto-use is set, updating the current instance")
+		logger.Infoln("Auto-use is set, updating the current instance")
 		cfg.Services.Kafka = kafkaCfg
 		if err := opts.Config.Save(cfg); err != nil {
-			return fmt.Errorf("%v: %w", opts.localizer.MustLocalize("kafka.common.error.couldNotUseKafka"), err)
+			return fmt.Errorf("%v: %w", opts.localizer.LocalizeByID("kafka.common.error.couldNotUseKafka"), err)
 		}
 	} else {
-		logger.Debug("Auto-use is not set, skipping updating the current instance")
+		logger.Infoln("Auto-use is not set, skipping updating the current instance")
 	}
 
 	return nil
@@ -244,8 +245,8 @@ func promptKafkaPayload(opts *Options) (payload *kafkamgmtclient.KafkaRequestPay
 	}
 
 	promptName := &survey.Input{
-		Message: opts.localizer.MustLocalize("kafka.create.input.name.message"),
-		Help:    opts.localizer.MustLocalize("kafka.create.input.name.help"),
+		Message: opts.localizer.LocalizeByID("kafka.create.input.name.message"),
+		Help:    opts.localizer.LocalizeByID("kafka.create.input.name.help"),
 	}
 
 	err = survey.AskOne(promptName, &answers.Name, survey.WithValidator(validator.ValidateName), survey.WithValidator(validator.ValidateNameIsAvailable))
@@ -263,7 +264,7 @@ func promptKafkaPayload(opts *Options) (payload *kafkamgmtclient.KafkaRequestPay
 	cloudProviderNames := cloudproviderutil.GetEnabledNames(cloudProviders)
 
 	cloudProviderPrompt := &survey.Select{
-		Message: opts.localizer.MustLocalize("kafka.create.input.cloudProvider.message"),
+		Message: opts.localizer.LocalizeByID("kafka.create.input.cloudProvider.message"),
 		Options: cloudProviderNames,
 	}
 
@@ -285,9 +286,9 @@ func promptKafkaPayload(opts *Options) (payload *kafkamgmtclient.KafkaRequestPay
 	regionIDs := cloudregionutil.GetEnabledIDs(regions)
 
 	regionPrompt := &survey.Select{
-		Message: opts.localizer.MustLocalize("kafka.create.input.cloudRegion.message"),
+		Message: opts.localizer.LocalizeByID("kafka.create.input.cloudRegion.message"),
 		Options: regionIDs,
-		Help:    opts.localizer.MustLocalize("kafka.create.input.cloudRegion.help"),
+		Help:    opts.localizer.LocalizeByID("kafka.create.input.cloudRegion.help"),
 	}
 
 	err = survey.AskOne(regionPrompt, &answers.Region)

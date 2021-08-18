@@ -9,10 +9,11 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/cmdutil"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -38,10 +39,10 @@ func NewDeleteConsumerGroupCommand(f *factory.Factory) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:     opts.localizer.MustLocalize("kafka.consumerGroup.delete.cmd.use"),
-		Short:   opts.localizer.MustLocalize("kafka.consumerGroup.delete.cmd.shortDescription"),
-		Long:    opts.localizer.MustLocalize("kafka.consumerGroup.delete.cmd.longDescription"),
-		Example: opts.localizer.MustLocalize("kafka.consumerGroup.delete.cmd.example"),
+		Use:     opts.localizer.LocalizeByID("kafka.consumerGroup.delete.cmd.use"),
+		Short:   opts.localizer.LocalizeByID("kafka.consumerGroup.delete.cmd.shortDescription"),
+		Long:    opts.localizer.LocalizeByID("kafka.consumerGroup.delete.cmd.longDescription"),
+		Example: opts.localizer.LocalizeByID("kafka.consumerGroup.delete.cmd.example"),
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			if opts.kafkaID != "" {
@@ -54,7 +55,7 @@ func NewDeleteConsumerGroupCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			if !cfg.HasKafka() {
-				return errors.New(opts.localizer.MustLocalize("kafka.consumerGroup.common.error.noKafkaSelected"))
+				return errors.New(opts.localizer.LocalizeByID("kafka.consumerGroup.common.error.noKafkaSelected"))
 			}
 
 			opts.kafkaID = cfg.Services.Kafka.ClusterID
@@ -63,9 +64,9 @@ func NewDeleteConsumerGroupCommand(f *factory.Factory) *cobra.Command {
 		},
 	}
 
-	opts.localizer.MustLocalize("kafka.consumerGroup.common.flag.id.description", localize.NewEntry("Action", "delete"))
-	cmd.Flags().BoolVarP(&opts.skipConfirm, "yes", "y", false, opts.localizer.MustLocalize("kafka.consumerGroup.delete.flag.yes.description"))
-	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.MustLocalize("kafka.consumerGroup.common.flag.id.description", localize.NewEntry("Action", "delete")))
+	opts.localizer.LocalizeByID("kafka.consumerGroup.common.flag.id.description", localize.NewEntry("Action", "delete"))
+	cmd.Flags().BoolVarP(&opts.skipConfirm, "yes", "y", false, opts.localizer.LocalizeByID("kafka.consumerGroup.delete.flag.yes.description"))
+	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.LocalizeByID("kafka.consumerGroup.common.flag.id.description", localize.NewEntry("Action", "delete")))
 	_ = cmd.MarkFlagRequired("id")
 
 	// flag based completions for ID
@@ -104,14 +105,14 @@ func runCmd(opts *Options) error {
 			return err
 		}
 		if httpRes.StatusCode == 404 {
-			return errors.New(opts.localizer.MustLocalize("kafka.consumerGroup.common.error.notFoundError", cgIDPair, kafkaNameTmplPair))
+			return errors.New(opts.localizer.LocalizeByID("kafka.consumerGroup.common.error.notFoundError", cgIDPair, kafkaNameTmplPair))
 		}
 	}
 
 	if !opts.skipConfirm {
 		var confirmedID string
 		promptConfirmDelete := &survey.Input{
-			Message: opts.localizer.MustLocalize("kafka.consumerGroup.delete.input.name.message"),
+			Message: opts.localizer.LocalizeByID("kafka.consumerGroup.delete.input.name.message"),
 		}
 
 		err = survey.AskOne(promptConfirmDelete, &confirmedID)
@@ -120,7 +121,7 @@ func runCmd(opts *Options) error {
 		}
 
 		if confirmedID != opts.id {
-			return errors.New(opts.localizer.MustLocalize("kafka.consumerGroup.delete.error.mismatchedIDConfirmation", localize.NewEntry("ConfirmedID", confirmedID), cgIDPair))
+			return errors.New(opts.localizer.LocalizeByID("kafka.consumerGroup.delete.error.mismatchedIDConfirmation", localize.NewEntry("ConfirmedID", confirmedID), cgIDPair))
 		}
 	}
 
@@ -135,21 +136,21 @@ func runCmd(opts *Options) error {
 
 		switch httpRes.StatusCode {
 		case 401:
-			return errors.New(opts.localizer.MustLocalize("kafka.consumerGroup.common.error.unauthorized", operationTmplPair))
+			return errors.New(opts.localizer.LocalizeByID("kafka.consumerGroup.common.error.unauthorized", operationTmplPair))
 		case 403:
-			return errors.New(opts.localizer.MustLocalize("kafka.consumerGroup.common.error.forbidden", operationTmplPair))
+			return errors.New(opts.localizer.LocalizeByID("kafka.consumerGroup.common.error.forbidden", operationTmplPair))
 		case 423:
-			return errors.New(opts.localizer.MustLocalize("kafka.consumerGroup.delete.error.locked"))
+			return errors.New(opts.localizer.LocalizeByID("kafka.consumerGroup.delete.error.locked"))
 		case 500:
-			return errors.New(opts.localizer.MustLocalize("kafka.consumerGroup.common.error.internalServerError"))
+			return errors.New(opts.localizer.LocalizeByID("kafka.consumerGroup.common.error.internalServerError"))
 		case 503:
-			return errors.New(opts.localizer.MustLocalize("kafka.consumerGroup.common.error.unableToConnectToKafka", localize.NewEntry("Name", kafkaInstance.GetName())))
+			return errors.New(opts.localizer.LocalizeByID("kafka.consumerGroup.common.error.unableToConnectToKafka", localize.NewEntry("Name", kafkaInstance.GetName())))
 		default:
 			return err
 		}
 	}
 
-	logger.Info(opts.localizer.MustLocalize("kafka.consumerGroup.delete.log.info.consumerGroupDeleted", localize.NewEntry("ConsumerGroupID", opts.id), kafkaNameTmplPair))
+	logger.Info(opts.localizer.LocalizeByID("kafka.consumerGroup.delete.log.info.consumerGroupDeleted", localize.NewEntry("ConsumerGroupID", opts.id), kafkaNameTmplPair))
 
 	return nil
 }

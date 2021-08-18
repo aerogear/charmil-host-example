@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 // LoggingRoundTripper implements http.RoundTripper. When set as Transport of http.Client, it executes HTTP requests with logging.
@@ -32,14 +32,14 @@ func (c LoggingRoundTripper) RoundTrip(r *http.Request) (*http.Response, error) 
 		return nil, err
 	}
 
-	c.Logger.Debug(string(requestDump))
+	c.Logger.Infoln(string(requestDump))
 
 	responseDump, err := httputil.DumpResponse(resp, true)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debug(string(responseDump))
+	c.Logger.Infoln(string(responseDump))
 
 	return resp, nil
 }
