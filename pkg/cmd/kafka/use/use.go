@@ -18,7 +18,8 @@ import (
 
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -146,7 +147,7 @@ func runInteractivePrompt(opts *Options) error {
 		return err
 	}
 
-	logger.Debug(opts.localizer.MustLocalize("common.log.debug.startingInteractivePrompt"))
+	logger.Infoln(opts.localizer.MustLocalize("common.log.debug.startingInteractivePrompt"))
 
 	selectedKafka, err := kafka.InteractiveSelect(connection, logger)
 	if err != nil {

@@ -9,9 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/aerogear/charmil-host-example/pkg/color"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	"github.com/redhat-developer/service-binding-operator/api/v1alpha1"
 	"github.com/redhat-developer/service-binding-operator/pkg/reconcile/pipeline/builder"
 	sboContext "github.com/redhat-developer/service-binding-operator/pkg/reconcile/pipeline/context"
@@ -24,6 +22,9 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
+
+	"github.com/aerogear/charmil/core/utils/color"
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type KubernetesClients struct {
@@ -160,7 +161,7 @@ func performBinding(options *ServiceBindingOptions, ns string, clients *Kubernet
 		if options.ForceUseOperator {
 			return errors.New(localizer.MustLocalize("cluster.serviceBinding.operatorMissing") + err.Error())
 		}
-		logger.Debug("Service binding Operator not available. Will use SDK option for binding")
+		logger.Infoln("Service binding Operator not available. Will use SDK option for binding")
 		return useSDKForBinding(clients, sb)
 	}
 

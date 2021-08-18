@@ -13,10 +13,11 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/dump"
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {

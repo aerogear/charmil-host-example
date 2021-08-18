@@ -14,9 +14,10 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/auth/token"
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 //go:embed static/mas-sso-redirect-page.html
@@ -44,8 +45,7 @@ func (h *masRedirectPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 	logger := h.Logger
 
 	callbackURL := fmt.Sprintf("%v%v", h.ServerAddr, r.URL.String())
-	logger.Debug("Redirected to callback URL:", callbackURL)
-	logger.Debug()
+	logger.Infoln("Redirected to callback URL:", callbackURL)
 
 	if r.URL.Query().Get("state") != h.State {
 		http.Error(w, "state did not match", http.StatusBadRequest)

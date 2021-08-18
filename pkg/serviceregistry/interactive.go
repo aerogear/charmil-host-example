@@ -6,8 +6,9 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	srsmgmtv1 "github.com/redhat-developer/app-services-sdk-go/registrymgmt/apiv1/client"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 const (

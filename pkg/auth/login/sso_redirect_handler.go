@@ -15,9 +15,10 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 //go:embed static/sso-redirect-page.html
@@ -44,8 +45,7 @@ type redirectPageHandler struct {
 // nolint:funlen
 func (h *redirectPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	callbackURL := fmt.Sprintf("%v%v", h.ServerAddr, r.URL.String())
-	h.Logger.Debug("Redirected to callback URL:", callbackURL)
-	h.Logger.Debug()
+	h.Logger.Infoln("Redirected to callback URL:", callbackURL)
 
 	if r.URL.Query().Get("state") != h.State {
 		http.Error(w, "state did not match", http.StatusBadRequest)

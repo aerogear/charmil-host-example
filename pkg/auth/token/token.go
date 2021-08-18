@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/logging"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -54,12 +54,12 @@ func (t *Token) NeedsRefresh() bool {
 	now := time.Now()
 	expires, left, err := GetExpiry(t.AccessToken, now)
 	if err != nil {
-		t.Logger.Debug("Error while checking token expiry:", err)
+		t.Logger.Infoln("Error while checking token expiry:", err)
 		return false
 	}
 
 	if !expires || left > 5*time.Minute {
-		t.Logger.Debug("Token is still valid. Expires in", left)
+		t.Logger.Infoln("Token is still valid. Expires in", left)
 		return false
 	}
 

@@ -11,7 +11,9 @@ import (
 
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 
+	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/api/kas"
+	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/kafka/kafkaerr"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
@@ -24,15 +26,13 @@ import (
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/aerogear/charmil-host-example/pkg/color"
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 
-	"github.com/aerogear/charmil-host-example/internal/config"
-	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/color"
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 // KubernetesCluster is a type which represents a Kubernetes cluster
@@ -159,7 +159,7 @@ func (c *KubernetesCluster) Connect(ctx context.Context, cmdOptions *ConnectArgu
 		}
 
 		if !shouldContinue {
-			c.logger.Debug(c.localizer.MustLocalize("cluster.kubernetes.connect.log.debug.cancellingConnect"))
+			c.logger.Infoln(c.localizer.MustLocalize("cluster.kubernetes.connect.log.debug.cancellingConnect"))
 			return nil
 		}
 	}

@@ -12,11 +12,12 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/browser"
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	"github.com/aerogear/charmil-host-example/static"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/phayes/freeport"
 	"golang.org/x/oauth2"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type AuthorizationCodeGrant struct {
@@ -61,7 +62,7 @@ func (a *AuthorizationCodeGrant) Execute(ctx context.Context, ssoCfg *SSOConfig,
 // log the user in to the main authorization server
 // this can be configured with the `--auth-url` flag
 func (a *AuthorizationCodeGrant) loginSSO(ctx context.Context, cfg *SSOConfig) error {
-	a.Logger.Debug("Logging into", cfg.AuthURL, "\n")
+	a.Logger.Infoln("Logging into", cfg.AuthURL)
 	clientCtx, cancel := createClientContext(ctx, a.HTTPClient)
 	defer cancel()
 	provider, err := oidc.NewProvider(ctx, cfg.AuthURL.String())
@@ -95,8 +96,7 @@ func (a *AuthorizationCodeGrant) loginSSO(ctx context.Context, cfg *SSOConfig) e
 	}
 	pkceCodeChallenge := pkce.CreateChallenge(pkceCodeVerifier)
 	authCodeURL := oauthConfig.AuthCodeURL(state, *pkce.GetAuthCodeURLOptions(pkceCodeChallenge)...)
-	a.Logger.Debug("Opening Authorization URL:", authCodeURL)
-	a.Logger.Info()
+	a.Logger.Infoln("Opening Authorization URL:", authCodeURL)
 
 	// create a localhost server to handle redirects and exchange tokens securely
 	sm := http.NewServeMux()
@@ -146,7 +146,7 @@ func (a *AuthorizationCodeGrant) loginSSO(ctx context.Context, cfg *SSOConfig) e
 
 // log in to MAS-SSO
 func (a *AuthorizationCodeGrant) loginMAS(ctx context.Context, cfg *SSOConfig) error {
-	a.Logger.Debug("Logging into", cfg.AuthURL, "\n")
+	a.Logger.Infoln("Logging into", cfg.AuthURL)
 
 	clientCtx, cancel := createClientContext(ctx, a.HTTPClient)
 	defer cancel()
@@ -182,8 +182,7 @@ func (a *AuthorizationCodeGrant) loginMAS(ctx context.Context, cfg *SSOConfig) e
 	pkceCodeChallenge := pkce.CreateChallenge(pkceCodeVerifier)
 
 	authCodeURL := oauthConfig.AuthCodeURL(state, *pkce.GetAuthCodeURLOptions(pkceCodeChallenge)...)
-	a.Logger.Debug("Opening Authorization URL:", authCodeURL)
-	a.Logger.Info()
+	a.Logger.Infoln("Opening Authorization URL:", authCodeURL)
 
 	sm := http.NewServeMux()
 	server := http.Server{
@@ -274,7 +273,7 @@ func createRedirectURL(path string) (*url.URL, int, error) {
 // fallback to printing the URL to the user terminal instead.
 func (a *AuthorizationCodeGrant) printAuthURLFallback(authCodeURL string, redirectURL *url.URL, err error) {
 	a.PrintURL = true
-	a.Logger.Debug("Error opening browser:", err, "\nPrinting Auth URL to console instead")
+	a.Logger.Infoln("Error opening browser:", err, "\nPrinting Auth URL to console instead")
 	a.openBrowser(authCodeURL, redirectURL)
 }
 

@@ -20,9 +20,10 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/flag"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 
 	"gopkg.in/yaml.v2"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 // row is the details of a Kafka instance needed to print to a table
@@ -112,7 +113,7 @@ func runList(opts *options) error {
 
 	if opts.search != "" {
 		query := buildQuery(opts.search)
-		logger.Debug(opts.localizer.MustLocalize("kafka.list.log.debug.filteringKafkaList", localize.NewEntry("Search", query)))
+		logger.Infoln(opts.localizer.MustLocalize("kafka.list.log.debug.filteringKafkaList", localize.NewEntry("Search", query)))
 		a = a.Search(query)
 	}
 

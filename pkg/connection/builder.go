@@ -16,7 +16,7 @@ import (
 	"github.com/Nerzal/gocloak/v7"
 
 	"github.com/aerogear/charmil-host-example/pkg/auth/token"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 // Builder contains the configuration and logic needed to connect to `api.openshift.com`.

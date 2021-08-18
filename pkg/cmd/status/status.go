@@ -15,12 +15,13 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/dump"
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	pkgStatus "github.com/aerogear/charmil-host-example/pkg/status"
 
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 const (
@@ -103,7 +104,7 @@ func runStatus(opts *Options) error {
 	}
 
 	if len(opts.services) > 0 {
-		logger.Debug(opts.localizer.MustLocalize("status.log.debug.requestingStatusOfServices"), opts.services)
+		logger.Infoln(opts.localizer.MustLocalize("status.log.debug.requestingStatusOfServices"), opts.services)
 	}
 
 	status, ok, err := pkgStatus.Get(context.Background(), pkgOpts)

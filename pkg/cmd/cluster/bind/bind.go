@@ -11,8 +11,9 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/kafka"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {

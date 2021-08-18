@@ -20,8 +20,9 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/flag"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -145,7 +146,7 @@ func runResetCredentials(opts *Options) (err error) {
 			return err
 		}
 		if !confirmReset {
-			logger.Debug(opts.localizer.MustLocalize("serviceAccount.resetCredentials.log.debug.cancelledReset"))
+			logger.Infoln(opts.localizer.MustLocalize("serviceAccount.resetCredentials.log.debug.cancelledReset"))
 			return nil
 		}
 	}
@@ -187,7 +188,7 @@ func resetCredentials(name string, opts *Options) (*kafkamgmtclient.ServiceAccou
 		return nil, err
 	}
 
-	logger.Debug(opts.localizer.MustLocalize("serviceAccount.resetCredentials.log.debug.resettingCredentials", localize.NewEntry("Name", name)))
+	logger.Infoln(opts.localizer.MustLocalize("serviceAccount.resetCredentials.log.debug.resettingCredentials", localize.NewEntry("Name", name)))
 
 	serviceacct, httpRes, err := api.ServiceAccount().ResetServiceAccountCreds(context.Background(), opts.id).Execute()
 	if err != nil {
@@ -220,7 +221,7 @@ func runInteractivePrompt(opts *Options) (err error) {
 		return err
 	}
 
-	logger.Debug(opts.localizer.MustLocalize("common.log.debug.startingInteractivePrompt"))
+	logger.Infoln(opts.localizer.MustLocalize("common.log.debug.startingInteractivePrompt"))
 
 	promptID := &survey.Input{
 		Message: opts.localizer.MustLocalize("serviceAccount.resetCredentials.input.id.message"),
@@ -238,7 +239,7 @@ func runInteractivePrompt(opts *Options) (err error) {
 
 	// if the --output flag was not used, ask in the prompt
 	if opts.fileFormat == "" {
-		logger.Debug(opts.localizer.MustLocalize("serviceAccount.common.log.debug.interactive.fileFormatNotSet"))
+		logger.Infoln(opts.localizer.MustLocalize("serviceAccount.common.log.debug.interactive.fileFormatNotSet"))
 
 		fileFormatPrompt := &survey.Select{
 			Message: opts.localizer.MustLocalize("serviceAccount.resetCredentials.input.fileFormat.message"),

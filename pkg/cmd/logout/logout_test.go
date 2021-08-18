@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/aerogear/charmil-host-example/pkg/localize/goi18n"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 
@@ -17,6 +16,8 @@ import (
 
 	"github.com/aerogear/charmil-host-example/pkg/auth/token"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 func TestNewLogoutCommand(t *testing.T) {

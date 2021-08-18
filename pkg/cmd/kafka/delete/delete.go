@@ -11,7 +11,6 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/kafka"
 
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 
 	"github.com/AlecAivazis/survey/v2"
@@ -19,6 +18,8 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/flag"
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type options struct {
@@ -140,7 +141,7 @@ func runDelete(opts *options) error {
 	}
 
 	// delete the Kafka
-	logger.Debug(opts.localizer.MustLocalize("kafka.delete.log.debug.deletingKafka"), fmt.Sprintf("\"%s\"", kafkaName))
+	logger.Infoln(opts.localizer.MustLocalize("kafka.delete.log.debug.deletingKafka"), fmt.Sprintf("\"%s\"", kafkaName))
 	a := api.Kafka().DeleteKafkaById(context.Background(), response.GetId())
 	a = a.Async(true)
 	_, _, err = a.Execute()

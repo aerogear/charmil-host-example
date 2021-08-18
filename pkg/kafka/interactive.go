@@ -6,8 +6,9 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 const (

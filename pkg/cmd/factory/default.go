@@ -11,7 +11,8 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/httputil"
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 // New creates a new command factory

@@ -20,8 +20,9 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/flag"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -175,7 +176,7 @@ func runInteractivePrompt(opts *Options) (err error) {
 		Localizer: opts.localizer,
 	}
 
-	logger.Debug(opts.localizer.MustLocalize("common.log.debug.startingInteractivePrompt"))
+	logger.Infoln(opts.localizer.MustLocalize("common.log.debug.startingInteractivePrompt"))
 
 	promptName := &survey.Input{
 		Message: opts.localizer.MustLocalize("serviceAccount.create.input.name.message"),
@@ -189,7 +190,7 @@ func runInteractivePrompt(opts *Options) (err error) {
 
 	// if the --file-format flag was not used, ask in the prompt
 	if opts.fileFormat == "" {
-		logger.Debug(opts.localizer.MustLocalize("serviceAccount.common.log.debug.interactive.fileFormatNotSet"))
+		logger.Infoln(opts.localizer.MustLocalize("serviceAccount.common.log.debug.interactive.fileFormatNotSet"))
 
 		fileFormatPrompt := &survey.Select{
 			Message: opts.localizer.MustLocalize("serviceAccount.create.input.fileFormat.message"),

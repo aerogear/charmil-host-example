@@ -23,8 +23,9 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/dump"
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -132,7 +133,7 @@ func runCmd(opts *Options) error {
 	a := api.TopicsApi.GetTopics(context.Background())
 
 	if opts.search != "" {
-		logger.Debug(opts.localizer.MustLocalize("kafka.topic.list.log.debug.filteringTopicList", localize.NewEntry("Search", opts.search)))
+		logger.Infoln(opts.localizer.MustLocalize("kafka.topic.list.log.debug.filteringTopicList", localize.NewEntry("Search", opts.search)))
 		a = a.Filter(opts.search)
 	}
 

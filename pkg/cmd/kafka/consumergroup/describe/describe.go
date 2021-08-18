@@ -16,13 +16,14 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/flag"
 	flagutil "github.com/aerogear/charmil-host-example/pkg/cmdutil/flags"
-	"github.com/aerogear/charmil-host-example/pkg/color"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil-host-example/pkg/dump"
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	kafkainstanceclient "github.com/redhat-developer/app-services-sdk-go/kafkainstance/apiv1internal/client"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
+
+	"github.com/aerogear/charmil/core/utils/color"
 )
 
 type Options struct {
@@ -168,7 +169,7 @@ func mapConsumerGroupDescribeToTableFormat(consumers []kafkainstanceclient.Consu
 		}
 
 		if consumer.GetMemberId() == "" {
-			row.MemberID = color.Italic("unconsumed")
+			row.MemberID = color.Bold("unconsumed")
 		}
 
 		rows = append(rows, row)

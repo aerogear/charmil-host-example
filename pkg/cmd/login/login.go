@@ -20,11 +20,12 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/debug"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 // When the value of the `--api-gateway` option is one of the keys of this map it will be replaced by the

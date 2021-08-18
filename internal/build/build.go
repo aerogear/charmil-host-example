@@ -4,10 +4,11 @@ import (
 	"context"
 	"runtime/debug"
 
-	"github.com/aerogear/charmil-host-example/pkg/color"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	"github.com/google/go-github/github"
+
+	"github.com/aerogear/charmil/core/utils/color"
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 // Define public variables here which you wish to be configurable at build time

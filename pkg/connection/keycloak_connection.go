@@ -25,7 +25,7 @@ import (
 
 	"github.com/aerogear/charmil-host-example/pkg/api"
 
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/logging"
 
 	"github.com/Nerzal/gocloak/v7"
 
@@ -59,7 +59,7 @@ type KeycloakConnection struct {
 // RefreshTokens will fetch a refreshed copy of the access token and refresh token from the authentication server
 // The new tokens will have an increased expiry time and are persisted in the config and connection
 func (c *KeycloakConnection) RefreshTokens(ctx context.Context) (err error) {
-	c.logger.Debug("Refreshing tokens")
+	c.logger.Infoln("Refreshing tokens")
 
 	cfg, err := c.Config.Load()
 	if err != nil {
@@ -112,7 +112,7 @@ func (c *KeycloakConnection) RefreshTokens(ctx context.Context) (err error) {
 	if err = c.Config.Save(cfg); err != nil {
 		return err
 	}
-	c.logger.Debug("Tokens refreshed")
+	c.logger.Infoln("Tokens refreshed")
 
 	return nil
 }
@@ -274,7 +274,7 @@ func (c *KeycloakConnection) createKafkaAdminAPI(bootstrapURL string) *kafkainst
 		apiURL.Host = fmt.Sprintf("admin-server-%v", host)
 	}
 
-	c.logger.Debugf("Making request to %v", apiURL.String())
+	c.logger.Infof("Making request to %v", apiURL.String())
 
 	client := kafkainstance.NewAPIClient(&kafkainstance.Config{
 		BaseURL:    apiURL.String(),

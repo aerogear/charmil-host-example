@@ -22,7 +22,6 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/dump"
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	pkgKafka "github.com/aerogear/charmil-host-example/pkg/kafka"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
@@ -31,6 +30,8 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/kafka/flags"
 	"github.com/aerogear/charmil-host-example/pkg/cmdutil"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -151,7 +152,7 @@ func runCreate(opts *Options) error {
 
 	var payload *kafkamgmtclient.KafkaRequestPayload
 	if opts.interactive {
-		logger.Debug()
+		logger.Infoln()
 
 		payload, err = promptKafkaPayload(opts)
 		if err != nil {
@@ -207,13 +208,13 @@ func runCreate(opts *Options) error {
 	}
 
 	if opts.autoUse {
-		logger.Debug("Auto-use is set, updating the current instance")
+		logger.Infoln("Auto-use is set, updating the current instance")
 		cfg.Services.Kafka = kafkaCfg
 		if err := opts.Config.Save(cfg); err != nil {
 			return fmt.Errorf("%v: %w", opts.localizer.MustLocalize("kafka.common.error.couldNotUseKafka"), err)
 		}
 	} else {
-		logger.Debug("Auto-use is not set, skipping updating the current instance")
+		logger.Infoln("Auto-use is not set, skipping updating the current instance")
 	}
 
 	return nil

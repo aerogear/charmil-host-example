@@ -7,12 +7,13 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/aerogear/charmil-host-example/pkg/color"
 	"github.com/aerogear/charmil-host-example/pkg/dump"
 
 	"github.com/AlecAivazis/survey/v2"
 
 	"github.com/MakeNowJust/heredoc"
+
+	"github.com/aerogear/charmil/core/utils/color"
 )
 
 // Templates

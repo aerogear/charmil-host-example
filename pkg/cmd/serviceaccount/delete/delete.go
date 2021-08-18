@@ -11,9 +11,10 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 	"github.com/aerogear/charmil-host-example/pkg/serviceaccount/validation"
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -103,7 +104,7 @@ func runDelete(opts *Options) (err error) {
 		}
 
 		if !confirmDelete {
-			logger.Debug(opts.localizer.MustLocalize("serviceAccount.delete.log.debug.deleteNotConfirmed"))
+			logger.Infoln(opts.localizer.MustLocalize("serviceAccount.delete.log.debug.deleteNotConfirmed"))
 			return nil
 		}
 	}

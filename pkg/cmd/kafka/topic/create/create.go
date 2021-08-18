@@ -23,9 +23,10 @@ import (
 
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 const (
@@ -227,7 +228,7 @@ func runInteractivePrompt(opts *Options) (err error) {
 		Connection: opts.Connection,
 	}
 
-	logger.Debug(opts.localizer.MustLocalize("common.log.debug.startingInteractivePrompt"))
+	logger.Infoln(opts.localizer.MustLocalize("common.log.debug.startingInteractivePrompt"))
 
 	promptName := &survey.Input{
 		Message: opts.localizer.MustLocalize("kafka.topic.common.input.name.message"),

@@ -9,10 +9,11 @@ import (
 
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/spf13/cobra"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {

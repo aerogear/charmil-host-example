@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aerogear/charmil-host-example/pkg/color"
 	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
 
@@ -12,12 +11,14 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cluster"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/logging"
 
 	"github.com/spf13/cobra"
 
 	// Get all auth schemes
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
+
+	"github.com/aerogear/charmil/core/utils/color"
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type Options struct {
@@ -75,7 +76,7 @@ func runStatus(opts *Options) error {
 	// Add versioning in future
 	isCRDInstalled, err := clusterConn.IsRhoasOperatorAvailableOnCluster(context.Background())
 	if isCRDInstalled && err != nil {
-		logger.Debug(err)
+		logger.Infoln(err)
 	}
 
 	if isCRDInstalled {
