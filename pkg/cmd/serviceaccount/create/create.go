@@ -14,8 +14,8 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	flagutil "github.com/aerogear/charmil-host-example/pkg/cmdutil/flags"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/serviceaccount/credentials"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"

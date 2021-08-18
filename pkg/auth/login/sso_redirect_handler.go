@@ -13,8 +13,8 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/auth/token"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
 

@@ -20,8 +20,8 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/aerogear/charmil-host-example/pkg/dump"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	pkgKafka "github.com/aerogear/charmil-host-example/pkg/kafka"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"

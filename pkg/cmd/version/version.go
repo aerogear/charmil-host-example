@@ -7,8 +7,8 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/build"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/debug"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 	"github.com/spf13/cobra"
 
 	"github.com/aerogear/charmil/core/utils/logging"

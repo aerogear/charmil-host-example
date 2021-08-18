@@ -8,9 +8,9 @@ import (
 
 	flagutil "github.com/aerogear/charmil-host-example/pkg/cmdutil/flags"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/kafka"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 
 	"github.com/aerogear/charmil-host-example/pkg/dump"

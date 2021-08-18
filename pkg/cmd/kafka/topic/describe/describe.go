@@ -12,7 +12,7 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/flag"
 
 	"github.com/aerogear/charmil-host-example/pkg/dump"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 	"gopkg.in/yaml.v2"
 
 	"github.com/aerogear/charmil-host-example/internal/config"

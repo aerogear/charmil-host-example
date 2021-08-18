@@ -3,8 +3,8 @@ package factory
 import (
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 
 	"github.com/aerogear/charmil/core/utils/logging"
 )

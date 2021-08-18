@@ -18,7 +18,7 @@ import (
 	flagutil "github.com/aerogear/charmil-host-example/pkg/cmdutil/flags"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil-host-example/pkg/dump"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 	kafkainstanceclient "github.com/redhat-developer/app-services-sdk-go/kafkainstance/apiv1internal/client"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"

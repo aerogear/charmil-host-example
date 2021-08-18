@@ -14,9 +14,9 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/api/kas"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
 	"github.com/aerogear/charmil-host-example/pkg/kafka/kafkaerr"
 	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 
 	"k8s.io/client-go/dynamic"
 
