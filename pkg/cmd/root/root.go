@@ -2,12 +2,19 @@ package root
 
 import (
 	"flag"
+	"fmt"
+	"os"
 
+	"github.com/aerogear/charmil-host-example/internal/build"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/config"
 
 	"github.com/aerogear/charmil-host-example/pkg/cmd/login"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/status"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/whoami"
+
+	pluginfactory "github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
+	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry"
+	pluginloc "github.com/aerogear/charmil-plugin-example/pkg/localize/goi18n"
 
 	"github.com/aerogear/charmil-host-example/pkg/arguments"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/cluster"
@@ -54,6 +61,15 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 	cmd.AddCommand(whoami.NewWhoAmICmd(f))
 	cmd.AddCommand(cliversion.NewVersionCmd(f))
 	cmd.AddCommand(config.NewConfigCommand(f))
+
+	loc, err := pluginloc.New(nil)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	pfact := pluginfactory.New(build.Version, loc)
+	cmd.AddCommand(registry.NewServiceRegistryCommand(pfact))
 
 	// Early stage/dev preview commands
 	// cmd.AddCommand(registry.NewServiceRegistryCommand(f))
