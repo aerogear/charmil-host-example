@@ -6,8 +6,6 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/aerogear/charmil-host-example/pkg/localize/goi18n"
-
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 
 	"github.com/aerogear/charmil-host-example/internal/mockutil"
@@ -17,11 +15,13 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/auth/token"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 
+	"github.com/aerogear/charmil/core/utils/localize"
 	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 func TestNewLogoutCommand(t *testing.T) {
-	localizer, _ := goi18n.New(nil)
+	localizer, _ := localize.New(nil)
+
 	type args struct {
 		cfg        *config.Config
 		connection *connection.KeycloakConnection

@@ -10,9 +10,9 @@ import (
 
 func NewCompletionCommand(f *factory.Factory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   f.Localizer.MustLocalize("completion.cmd.use"),
-		Short: f.Localizer.MustLocalize("completion.cmd.shortDescription"),
-		Long:  f.Localizer.MustLocalize("completion.cmd.longDescription"),
+		Use:   f.Localizer.LocalizeByID("completion.cmd.use"),
+		Short: f.Localizer.LocalizeByID("completion.cmd.shortDescription"),
+		Long:  f.Localizer.LocalizeByID("completion.cmd.longDescription"),
 		Args:  cobra.ExactArgs(1),
 	}
 

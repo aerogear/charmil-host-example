@@ -11,9 +11,9 @@ import (
 // NewServiceAccountCommand creates a new command sub-group to manage service accounts
 func NewClusterCommand(f *factory.Factory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     f.Localizer.MustLocalize("cluster.cmd.use"),
-		Short:   f.Localizer.MustLocalize("cluster.cmd.shortDescription"),
-		Example: f.Localizer.MustLocalize("cluster.cmd.example"),
+		Use:     f.Localizer.LocalizeByID("cluster.cmd.use"),
+		Short:   f.Localizer.LocalizeByID("cluster.cmd.shortDescription"),
+		Example: f.Localizer.LocalizeByID("cluster.cmd.example"),
 		Args:    cobra.ExactArgs(1),
 	}
 

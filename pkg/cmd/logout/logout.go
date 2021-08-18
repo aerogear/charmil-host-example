@@ -11,7 +11,7 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/localize"
 
 	"github.com/aerogear/charmil/core/utils/logging"
 )
@@ -33,9 +33,9 @@ func NewLogoutCommand(f *factory.Factory) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   opts.localizer.MustLocalize("logout.cmd.use"),
-		Short: opts.localizer.MustLocalize("logout.cmd.shortDescription"),
-		Long:  opts.localizer.MustLocalize("logout.cmd.longDescription"),
+		Use:   opts.localizer.LocalizeByID("logout.cmd.use"),
+		Short: opts.localizer.LocalizeByID("logout.cmd.shortDescription"),
+		Long:  opts.localizer.LocalizeByID("logout.cmd.longDescription"),
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			return runLogout(opts)
@@ -58,10 +58,10 @@ func runLogout(opts *Options) error {
 	err = connection.Logout(context.TODO())
 
 	if err != nil {
-		return fmt.Errorf("%v: %w", opts.localizer.MustLocalize("logout.error.unableToLogout"), err)
+		return fmt.Errorf("%v: %w", opts.localizer.LocalizeByID("logout.error.unableToLogout"), err)
 	}
 
-	logger.Info(opts.localizer.MustLocalize("logout.log.info.logoutSuccess"))
+	logger.Info(opts.localizer.LocalizeByID("logout.log.info.logoutSuccess"))
 
 	return nil
 }

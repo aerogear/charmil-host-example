@@ -10,9 +10,9 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/auth/pkce"
 	"github.com/aerogear/charmil-host-example/pkg/browser"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
 	"github.com/aerogear/charmil-host-example/static"
 	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/phayes/freeport"
 	"golang.org/x/oauth2"
@@ -41,20 +41,20 @@ type SSOConfig struct {
 // https://tools.ietf.org/html/rfc6749#section-4.1
 func (a *AuthorizationCodeGrant) Execute(ctx context.Context, ssoCfg *SSOConfig, masSSOCfg *SSOConfig) error {
 	// log in to SSO
-	a.Logger.Info(a.Localizer.MustLocalize("login.log.info.loggingIn"))
+	a.Logger.Info(a.Localizer.LocalizeByID("login.log.info.loggingIn"))
 	if err := a.loginSSO(ctx, ssoCfg); err != nil {
 		return err
 	}
-	a.Logger.Info(a.Localizer.MustLocalize("login.log.info.loggedIn"))
+	a.Logger.Info(a.Localizer.LocalizeByID("login.log.info.loggedIn"))
 
 	masSSOHost := masSSOCfg.AuthURL.Host
 
-	a.Logger.Info(a.Localizer.MustLocalize("login.log.info.loggingInMAS", localize.NewEntry("Host", masSSOHost)))
+	a.Logger.Info(a.Localizer.LocalizeByID("login.log.info.loggingInMAS", localize.NewEntry("Host", masSSOHost)))
 	// log in to MAS-SSO
 	if err := a.loginMAS(ctx, masSSOCfg); err != nil {
 		return err
 	}
-	a.Logger.Info(a.Localizer.MustLocalize("login.log.info.loggedInMAS", localize.NewEntry("Host", masSSOHost)))
+	a.Logger.Info(a.Localizer.LocalizeByID("login.log.info.loggedInMAS", localize.NewEntry("Host", masSSOHost)))
 
 	return nil
 }
@@ -224,7 +224,7 @@ func (a *AuthorizationCodeGrant) loginMAS(ctx context.Context, cfg *SSOConfig) e
 
 func (a *AuthorizationCodeGrant) openBrowser(authCodeURL string, redirectURL *url.URL) {
 	if a.PrintURL {
-		a.Logger.Info(a.Localizer.MustLocalize("login.log.info.openSSOUrl"), "\n")
+		a.Logger.Info(a.Localizer.LocalizeByID("login.log.info.openSSOUrl"), "\n")
 		fmt.Fprintln(a.IO.Out, authCodeURL)
 		a.Logger.Info("")
 	} else {

@@ -7,8 +7,8 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/build"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/debug"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
 	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
 	"github.com/spf13/cobra"
 
 	"github.com/aerogear/charmil/core/utils/logging"
@@ -28,8 +28,8 @@ func NewVersionCmd(f *factory.Factory) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:    opts.localizer.MustLocalize("version.cmd.use"),
-		Short:  opts.localizer.MustLocalize("version.cmd.shortDescription"),
+		Use:    opts.localizer.LocalizeByID("version.cmd.use"),
+		Short:  opts.localizer.LocalizeByID("version.cmd.shortDescription"),
 		Hidden: true,
 		Args:   cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
@@ -41,7 +41,7 @@ func NewVersionCmd(f *factory.Factory) *cobra.Command {
 }
 
 func runCmd(opts *Options) (err error) {
-	fmt.Fprintln(opts.IO.Out, opts.localizer.MustLocalize("version.cmd.outputText", localize.NewEntry("Version", build.Version)))
+	fmt.Fprintln(opts.IO.Out, opts.localizer.LocalizeByID("version.cmd.outputText", localize.NewEntry("Version", build.Version)))
 
 	logger, err := opts.Logger()
 	if err != nil {

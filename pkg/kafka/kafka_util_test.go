@@ -3,14 +3,14 @@ package kafka
 import (
 	"testing"
 
-	"github.com/aerogear/charmil-host-example/pkg/localize/goi18n"
+	"github.com/aerogear/charmil/core/utils/localize"
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 )
 
 var validator *Validator
 
 func init() {
-	localizer, _ := goi18n.New(nil)
+	localizer, _ := localize.New(nil)
 
 	validator = &Validator{
 		Localizer: localizer,

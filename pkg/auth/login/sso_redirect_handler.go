@@ -13,8 +13,8 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/auth/token"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
 	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
 
@@ -90,12 +90,12 @@ func (h *redirectPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		username = "unknown"
 	}
 
-	pageTitle := h.Localizer.MustLocalize("login.redirectPage.title")
-	pageBody := h.Localizer.MustLocalize("login.redirectPage.body", localize.NewEntry("Username", username))
+	pageTitle := h.Localizer.LocalizeByID("login.redirectPage.title")
+	pageBody := h.Localizer.LocalizeByID("login.redirectPage.body", localize.NewEntry("Username", username))
 
 	issuerURL, realm, ok := connection.SplitKeycloakRealmURL(h.AuthURL)
 	if !ok {
-		h.Logger.Error(h.Localizer.MustLocalize("login.error.noRealmInURL"))
+		h.Logger.Error(h.Localizer.LocalizeByID("login.error.noRealmInURL"))
 		os.Exit(1)
 	}
 	redirectPage := fmt.Sprintf(ssoRedirectHTMLPage, pageTitle, pageTitle, pageBody, issuerURL, realm, h.ClientID)

@@ -7,9 +7,9 @@ import (
 
 func NewCommand(f *factory.Factory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:                   f.Localizer.MustLocalize("completion.bash.cmd.use"),
-		Short:                 f.Localizer.MustLocalize("completion.bash.cmd.shortDescription"),
-		Long:                  f.Localizer.MustLocalize("completion.bash.cmd.longDescription"),
+		Use:                   f.Localizer.LocalizeByID("completion.bash.cmd.use"),
+		Short:                 f.Localizer.LocalizeByID("completion.bash.cmd.shortDescription"),
+		Long:                  f.Localizer.LocalizeByID("completion.bash.cmd.longDescription"),
 		DisableFlagsInUseLine: true,
 		Args:                  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

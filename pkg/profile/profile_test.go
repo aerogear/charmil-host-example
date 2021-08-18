@@ -6,11 +6,11 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/internal/mockutil"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
-	"github.com/aerogear/charmil-host-example/pkg/localize/goi18n"
+	"github.com/aerogear/charmil/core/utils/localize"
 )
 
 func TestEnableDevPreviewConfig(t *testing.T) {
-	localizer, _ := goi18n.New(nil)
+	localizer, _ := localize.New(nil)
 	testVal := true
 	factoryObj := factory.New("dev", localizer)
 
@@ -35,7 +35,7 @@ func TestEnableDevPreviewConfig(t *testing.T) {
 }
 
 func TestDevPreviewEnabled(t *testing.T) {
-	localizer, _ := goi18n.New(nil)
+	localizer, _ := localize.New(nil)
 	factoryObj := factory.New("dev", localizer)
 	factoryObj.Config = mockutil.NewConfigMock(&config.Config{})
 	testVal := false

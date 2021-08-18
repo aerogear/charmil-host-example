@@ -5,7 +5,7 @@ import (
 	"regexp"
 
 	"github.com/aerogear/charmil-host-example/pkg/common/commonerr"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
+	"github.com/aerogear/charmil/core/utils/localize"
 )
 
 const (
@@ -31,9 +31,9 @@ func (v *Validator) ValidateName(val interface{}) error {
 	}
 
 	if len(name) < minNameLength {
-		return errors.New(v.Localizer.MustLocalize("serviceAccount.common.validation.name.error.required"))
+		return errors.New(v.Localizer.LocalizeByID("serviceAccount.common.validation.name.error.required"))
 	} else if len(name) > maxNameLength {
-		return errors.New(v.Localizer.MustLocalize("serviceAccount.common.validation.name.error.lengthError", localize.NewEntry("MaxNameLen", maxNameLength)))
+		return errors.New(v.Localizer.LocalizeByID("serviceAccount.common.validation.name.error.lengthError", localize.NewEntry("MaxNameLen", maxNameLength)))
 	}
 
 	matched, _ := regexp.Match(legalNameChars, []byte(name))
@@ -42,7 +42,7 @@ func (v *Validator) ValidateName(val interface{}) error {
 		return nil
 	}
 
-	return errors.New(v.Localizer.MustLocalize("serviceAccount.common.validation.name.error.invalidChars", localize.NewEntry("Name", name)))
+	return errors.New(v.Localizer.LocalizeByID("serviceAccount.common.validation.name.error.invalidChars", localize.NewEntry("Name", name)))
 }
 
 // ValidateDescription validates the service account description text
@@ -57,7 +57,7 @@ func (v *Validator) ValidateDescription(val interface{}) error {
 	}
 
 	if len(description) > maxDescriptionLength {
-		return errors.New(v.Localizer.MustLocalize("serviceAccount.common.validation.description.error.lengthError", localize.NewEntry("MaxLen", maxDescriptionLength)))
+		return errors.New(v.Localizer.LocalizeByID("serviceAccount.common.validation.description.error.lengthError", localize.NewEntry("MaxLen", maxDescriptionLength)))
 	}
 
 	matched, _ := regexp.Match(legalDescriptionChars, []byte(description))
@@ -66,7 +66,7 @@ func (v *Validator) ValidateDescription(val interface{}) error {
 		return nil
 	}
 
-	return errors.New(v.Localizer.MustLocalize("serviceAccount.common.validation.description.error.invalidChars"))
+	return errors.New(v.Localizer.LocalizeByID("serviceAccount.common.validation.description.error.invalidChars"))
 }
 
 // ValidateUUID validates if ID is a valid UUID
@@ -82,5 +82,5 @@ func (v *Validator) ValidateUUID(val interface{}) error {
 		return nil
 	}
 
-	return errors.New(v.Localizer.MustLocalize("serviceAccount.common.validation.id.error.invalidID", localize.NewEntry("ID", id)))
+	return errors.New(v.Localizer.LocalizeByID("serviceAccount.common.validation.id.error.invalidID", localize.NewEntry("ID", id)))
 }

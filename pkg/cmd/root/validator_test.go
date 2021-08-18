@@ -9,13 +9,13 @@ import (
 	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/internal/mockutil"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
-	"github.com/aerogear/charmil-host-example/pkg/localize/goi18n"
+	"github.com/aerogear/charmil/core/utils/localize"
 	"github.com/aerogear/charmil/validator"
 	"github.com/aerogear/charmil/validator/rules"
 )
 
 func Test_ValidateCommandsUsingCharmilValidator(t *testing.T) {
-	localizer, err := goi18n.New(nil)
+	localizer, err := localize.New(nil)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
