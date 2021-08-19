@@ -90,7 +90,7 @@ func (c *File) Location() (path string, err error) {
 		if e != nil {
 			return "", e
 		}
-		path = filepath.Join(rhoasCfgDir, "plugin_config.json")
+		path = filepath.Join(rhoasCfgDir, "rhoas_config.json")
 		if e != nil {
 			return "", e
 		}
