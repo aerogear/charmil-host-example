@@ -12,8 +12,6 @@ import (
 
 	"github.com/aerogear/charmil-host-example/internal/build"
 
-	"github.com/aerogear/charmil-host-example/pkg/config"
-
 	"github.com/aerogear/charmil-host-example/pkg/cmd/debug"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/root"
@@ -44,11 +42,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = initConfig(cmdFactory)
+	cfgFile, err := cmdFactory.Config.Load()
 	if err != nil {
-		logger.Errorf(localizer.LocalizeByID("main.config.error", localize.NewEntry("Error", err)))
+		fmt.Println(cmdFactory.IOStreams.ErrOut, err)
 		os.Exit(1)
 	}
+
+	fmt.Println(cfgFile)
 
 	rootCmd := root.NewRootCommand(cmdFactory, buildVersion)
 
@@ -57,6 +57,11 @@ func main() {
 	if generateDocs {
 		generateDocumentation(rootCmd)
 		os.Exit(0)
+	}
+
+	if err = cmdFactory.Config.Save(cfgFile); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 
 	err = rootCmd.Execute()
@@ -92,39 +97,6 @@ func generateDocumentation(rootCommand *cobra.Command) {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-}
-
-func initConfig(f *factory.Factory) error {
-	if !config.HasCustomLocation() {
-		rhoasCfgDir, err := config.DefaultDir()
-		if err != nil {
-			return err
-		}
-
-		// create rhoas config directory
-		if _, err = os.Stat(rhoasCfgDir); os.IsNotExist(err) {
-			err = os.MkdirAll(rhoasCfgDir, 0o700)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	cfgFile, err := f.Config.Load()
-
-	if cfgFile != nil {
-		return err
-	}
-
-	if !os.IsNotExist(err) {
-		return err
-	}
-
-	cfgFile = &config.Config{}
-	if err := f.Config.Save(cfgFile); err != nil {
-		return err
-	}
-	return nil
 }
 
 func wrapErrorf(err error, localizer localize.Localizer) error {

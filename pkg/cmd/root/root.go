@@ -2,23 +2,15 @@ package root
 
 import (
 	"flag"
-	"fmt"
-	"os"
 
 	"github.com/aerogear/charmil-host-example/internal/build"
-	"github.com/aerogear/charmil-host-example/pkg/config"
-	"github.com/aerogear/charmil-host-example/pkg/localesettings"
-	"github.com/aerogear/charmil/core/utils/localize"
-	"golang.org/x/text/language"
 
 	"github.com/aerogear/charmil-host-example/pkg/cmd/login"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/status"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/whoami"
 
 	pluginfactory "github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
-
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry"
-	pluginConnection "github.com/aerogear/charmil-plugin-example/pkg/connection"
 
 	"github.com/aerogear/charmil-host-example/pkg/arguments"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/cluster"
@@ -66,67 +58,55 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 	cmd.AddCommand(cliversion.NewVersionCmd(f))
 	// cmd.AddCommand(config.NewConfigCommand(f))
 
-	locConfig := &localize.Config{
-		Language: &language.English,
-		Files:    localesettings.DefaultLocales,
-		Format:   "toml",
-	}
+	pfact := pluginfactory.New(build.Version, nil)
 
-	localizer, err := localize.New(locConfig)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
+	// pluginBuilder := pluginConnection.NewBuilder()
 
-	pfact := pluginfactory.New(build.Version, localizer)
+	// cfgFile := config.NewFile()
+	// cfg, err := cfgFile.Load()
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	pluginBuilder := pluginConnection.NewBuilder()
+	// if cfg.AccessToken != "" {
+	// 	pluginBuilder.WithAccessToken(cfg.AccessToken)
+	// }
+	// if cfg.RefreshToken != "" {
+	// 	pluginBuilder.WithRefreshToken(cfg.RefreshToken)
+	// }
+	// if cfg.MasAccessToken != "" {
+	// 	pluginBuilder.WithMASAccessToken(cfg.MasAccessToken)
+	// }
+	// if cfg.MasRefreshToken != "" {
+	// 	pluginBuilder.WithMASRefreshToken(cfg.MasRefreshToken)
+	// }
+	// if cfg.ClientID != "" {
+	// 	pluginBuilder.WithClientID(cfg.ClientID)
+	// }
+	// if cfg.Scopes != nil {
+	// 	pluginBuilder.WithScopes(cfg.Scopes...)
+	// }
+	// if cfg.APIUrl != "" {
+	// 	pluginBuilder.WithURL(cfg.APIUrl)
+	// }
+	// if cfg.AuthURL == "" {
+	// 	cfg.AuthURL = build.ProductionAuthURL
+	// }
+	// pluginBuilder.WithAuthURL(cfg.AuthURL)
 
-	cfgFile := config.NewFile()
-	cfg, err := cfgFile.Load()
-	if err != nil {
-		panic(err)
-	}
+	// if cfg.MasAuthURL == "" {
+	// 	cfg.MasAuthURL = build.ProductionMasAuthURL
+	// }
+	// pluginBuilder.WithMASAuthURL(cfg.MasAuthURL)
 
-	if cfg.AccessToken != "" {
-		pluginBuilder.WithAccessToken(cfg.AccessToken)
-	}
-	if cfg.RefreshToken != "" {
-		pluginBuilder.WithRefreshToken(cfg.RefreshToken)
-	}
-	if cfg.MasAccessToken != "" {
-		pluginBuilder.WithMASAccessToken(cfg.MasAccessToken)
-	}
-	if cfg.MasRefreshToken != "" {
-		pluginBuilder.WithMASRefreshToken(cfg.MasRefreshToken)
-	}
-	if cfg.ClientID != "" {
-		pluginBuilder.WithClientID(cfg.ClientID)
-	}
-	if cfg.Scopes != nil {
-		pluginBuilder.WithScopes(cfg.Scopes...)
-	}
-	if cfg.APIUrl != "" {
-		pluginBuilder.WithURL(cfg.APIUrl)
-	}
-	if cfg.AuthURL == "" {
-		cfg.AuthURL = build.ProductionAuthURL
-	}
-	pluginBuilder.WithAuthURL(cfg.AuthURL)
+	// pluginBuilder.WithInsecure(cfg.Insecure)
 
-	if cfg.MasAuthURL == "" {
-		cfg.MasAuthURL = build.ProductionMasAuthURL
-	}
-	pluginBuilder.WithMASAuthURL(cfg.MasAuthURL)
+	// pluginBuilder.WithConfig(cfgFile)
 
-	pluginBuilder.WithInsecure(cfg.Insecure)
-
-	pluginBuilder.WithConfig(cfgFile)
-
-	cmd.AddCommand(registry.NewServiceRegistryCommand(pfact, pluginBuilder))
+	// cmd.AddCommand(registry.NewServiceRegistryCommand(pfact, pluginBuilder))
 
 	// Early stage/dev preview commands
-	// cmd.AddCommand(registry.NewServiceRegistryCommand(f))
+	cmd.AddCommand(registry.NewServiceRegistryCommand(pfact))
 
 	return cmd
 }
