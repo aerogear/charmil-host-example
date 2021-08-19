@@ -29,18 +29,15 @@ func (c *File) Load() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	_, err = os.Stat(file)
-	if os.IsNotExist(err) {
-		return nil, err
-	}
-	if err != nil {
-		return nil, fmt.Errorf(errorFormat, "unable to check if config file exists", err)
-	}
+
 	// #nosec G304
 	data, err := ioutil.ReadFile(file)
-	if err != nil {
-		return nil, fmt.Errorf(errorFormat, "unable to read config file", err)
+	if os.IsNotExist(err) {
+		return &Config{}, nil
+	} else if err != nil {
+		return nil, err
 	}
+
 	var cfg Config
 	err = json.Unmarshal(data, &cfg)
 	if err != nil {
@@ -59,16 +56,7 @@ func (c *File) Save(cfg *Config) error {
 	if err != nil {
 		return fmt.Errorf("%v: %w", "unable to marshal config", err)
 	}
-	rhoasCfgDir, err := DefaultDir()
-	if err != nil {
-		return err
-	}
-	if _, err = os.Stat(rhoasCfgDir); os.IsNotExist(err) {
-		err = os.Mkdir(rhoasCfgDir, 0o700)
-		if err != nil {
-			return err
-		}
-	}
+
 	err = ioutil.WriteFile(file, data, 0o600)
 	if err != nil {
 		return fmt.Errorf(errorFormat, "unable to save config", err)
@@ -98,15 +86,23 @@ func (c *File) Location() (path string, err error) {
 	if rhoasConfig := os.Getenv(EnvName); rhoasConfig != "" {
 		path = rhoasConfig
 	} else {
-		rhoasCfgDir, err := DefaultDir()
-		if err != nil {
-			return "", err
+		rhoasCfgDir, e := DefaultDir()
+		if e != nil {
+			return "", e
 		}
-		path = filepath.Join(rhoasCfgDir, "config.json")
-		if err != nil {
-			return "", err
+		path = filepath.Join(rhoasCfgDir, "plugin_config.json")
+		if e != nil {
+			return "", e
 		}
 	}
+
+	if _, err = os.Stat(filepath.Dir(path)); os.IsNotExist(err) {
+		e := os.MkdirAll(filepath.Dir(path), 0700)
+		if e != nil {
+			return "", e
+		}
+	}
+
 	return path, nil
 }
 
