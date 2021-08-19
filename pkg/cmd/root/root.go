@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/aerogear/charmil-host-example/internal/build"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 	"github.com/aerogear/charmil-host-example/pkg/localesettings"
 	"github.com/aerogear/charmil/core/utils/localize"
 	"golang.org/x/text/language"
@@ -15,7 +16,6 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/whoami"
 
 	pluginfactory "github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
-	pluginconfig "github.com/aerogear/charmil-plugin-example/pkg/config"
 
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry"
 	pluginConnection "github.com/aerogear/charmil-plugin-example/pkg/connection"
@@ -82,13 +82,11 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 
 	pluginBuilder := pluginConnection.NewBuilder()
 
-	cfgFile := pluginconfig.NewFile()
+	cfgFile := config.NewFile()
 	cfg, err := cfgFile.Load()
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(cfg)
 
 	if cfg.AccessToken != "" {
 		pluginBuilder.WithAccessToken(cfg.AccessToken)
