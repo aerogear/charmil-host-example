@@ -12,7 +12,7 @@ import (
 
 	"github.com/aerogear/charmil-host-example/internal/mockutil"
 
-	"github.com/aerogear/charmil-host-example/internal/config"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 
 	"github.com/aerogear/charmil-host-example/pkg/auth/token"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"

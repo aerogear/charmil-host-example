@@ -12,8 +12,8 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/kafka/kafkaerr"
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 
-	"github.com/aerogear/charmil-host-example/internal/config"
 	kas "github.com/aerogear/charmil-host-example/pkg/api/kas"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 	"github.com/openconfig/goyang/pkg/indent"
 
 	"github.com/aerogear/charmil/core/utils/logging"

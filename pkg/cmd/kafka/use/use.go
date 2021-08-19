@@ -16,8 +16,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 
 	"github.com/aerogear/charmil/core/utils/logging"
 )

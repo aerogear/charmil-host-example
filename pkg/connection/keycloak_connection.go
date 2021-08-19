@@ -21,7 +21,7 @@ import (
 
 	"github.com/aerogear/charmil-host-example/pkg/kafka/kafkaerr"
 
-	"github.com/aerogear/charmil-host-example/internal/config"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 
 	"github.com/aerogear/charmil-host-example/pkg/api"
 

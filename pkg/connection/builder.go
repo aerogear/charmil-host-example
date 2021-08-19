@@ -10,8 +10,8 @@ import (
 
 	"github.com/aerogear/charmil-host-example/internal/build"
 
-	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/debug"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 
 	"github.com/Nerzal/gocloak/v7"
 
@@ -25,10 +25,10 @@ type Builder struct {
 	trustedCAs        *x509.CertPool
 	insecure          bool
 	disableKeepAlives bool
-	accessToken       string
-	refreshToken      string
-	masAccessToken    string
-	masRefreshToken   string
+	AccessToken       string
+	RefreshToken      string
+	MasAccessToken    string
+	MasRefreshToken   string
 	clientID          string
 	scopes            []string
 	apiURL            string
@@ -52,22 +52,22 @@ func NewBuilder() *Builder {
 }
 
 func (b *Builder) WithAccessToken(accessToken string) *Builder {
-	b.accessToken = accessToken
+	b.AccessToken = accessToken
 	return b
 }
 
 func (b *Builder) WithRefreshToken(refreshToken string) *Builder {
-	b.refreshToken = refreshToken
+	b.RefreshToken = refreshToken
 	return b
 }
 
 func (b *Builder) WithMASAccessToken(accessToken string) *Builder {
-	b.masAccessToken = accessToken
+	b.MasAccessToken = accessToken
 	return b
 }
 
 func (b *Builder) WithMASRefreshToken(refreshToken string) *Builder {
-	b.masRefreshToken = refreshToken
+	b.MasRefreshToken = refreshToken
 	return b
 }
 
@@ -149,11 +149,11 @@ func (b *Builder) Build() (connection *KeycloakConnection, err error) {
 // the connection, and an error if something fails when trying to create it.
 // nolint:funlen
 func (b *Builder) BuildContext(ctx context.Context) (connection *KeycloakConnection, err error) {
-	if b.connectionConfig.RequireAuth && b.accessToken == "" && b.refreshToken == "" {
+	if b.connectionConfig.RequireAuth && b.AccessToken == "" && b.RefreshToken == "" {
 		return nil, &AuthError{notLoggedInError()}
 	}
 
-	if b.connectionConfig.RequireMASAuth && b.masAccessToken == "" && b.masRefreshToken == "" {
+	if b.connectionConfig.RequireMASAuth && b.MasAccessToken == "" && b.MasRefreshToken == "" {
 		return nil, &MasAuthError{notLoggedInMASError()}
 	}
 
@@ -177,14 +177,14 @@ func (b *Builder) BuildContext(ctx context.Context) (connection *KeycloakConnect
 	}
 
 	tkn := token.Token{
-		AccessToken:  b.accessToken,
-		RefreshToken: b.refreshToken,
+		AccessToken:  b.AccessToken,
+		RefreshToken: b.RefreshToken,
 		Logger:       b.logger,
 	}
 
 	masTk := token.Token{
-		AccessToken:  b.masAccessToken,
-		RefreshToken: b.masRefreshToken,
+		AccessToken:  b.MasAccessToken,
+		RefreshToken: b.MasRefreshToken,
 		Logger:       b.logger,
 	}
 

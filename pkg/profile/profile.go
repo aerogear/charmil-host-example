@@ -2,8 +2,8 @@
 package profile
 
 import (
-	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 )
 
 // Visual element displayed in help

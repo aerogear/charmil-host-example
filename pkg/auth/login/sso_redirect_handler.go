@@ -10,8 +10,8 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/auth/token"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil/core/utils/iostreams"
 	"github.com/aerogear/charmil/core/utils/localize"

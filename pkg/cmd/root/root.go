@@ -6,15 +6,19 @@ import (
 	"os"
 
 	"github.com/aerogear/charmil-host-example/internal/build"
-	"github.com/aerogear/charmil-host-example/pkg/cmd/config"
+	"github.com/aerogear/charmil-host-example/pkg/localesettings"
+	"github.com/aerogear/charmil/core/utils/localize"
+	"golang.org/x/text/language"
 
 	"github.com/aerogear/charmil-host-example/pkg/cmd/login"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/status"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/whoami"
 
 	pluginfactory "github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
+	pluginconfig "github.com/aerogear/charmil-plugin-example/pkg/config"
+
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry"
-	pluginloc "github.com/aerogear/charmil-plugin-example/pkg/localize/goi18n"
+	pluginConnection "github.com/aerogear/charmil-plugin-example/pkg/connection"
 
 	"github.com/aerogear/charmil-host-example/pkg/arguments"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/cluster"
@@ -60,16 +64,68 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 	cmd.AddCommand(completion.NewCompletionCommand(f))
 	cmd.AddCommand(whoami.NewWhoAmICmd(f))
 	cmd.AddCommand(cliversion.NewVersionCmd(f))
-	cmd.AddCommand(config.NewConfigCommand(f))
+	// cmd.AddCommand(config.NewConfigCommand(f))
 
-	loc, err := pluginloc.New(nil)
+	locConfig := &localize.Config{
+		Language: &language.English,
+		Files:    localesettings.DefaultLocales,
+		Format:   "toml",
+	}
+
+	localizer, err := localize.New(locConfig)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
-	pfact := pluginfactory.New(build.Version, loc)
-	cmd.AddCommand(registry.NewServiceRegistryCommand(pfact))
+	pfact := pluginfactory.New(build.Version, localizer)
+
+	pluginBuilder := pluginConnection.NewBuilder()
+
+	cfgFile := pluginconfig.NewFile()
+	cfg, err := cfgFile.Load()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(cfg)
+
+	if cfg.AccessToken != "" {
+		pluginBuilder.WithAccessToken(cfg.AccessToken)
+	}
+	if cfg.RefreshToken != "" {
+		pluginBuilder.WithRefreshToken(cfg.RefreshToken)
+	}
+	if cfg.MasAccessToken != "" {
+		pluginBuilder.WithMASAccessToken(cfg.MasAccessToken)
+	}
+	if cfg.MasRefreshToken != "" {
+		pluginBuilder.WithMASRefreshToken(cfg.MasRefreshToken)
+	}
+	if cfg.ClientID != "" {
+		pluginBuilder.WithClientID(cfg.ClientID)
+	}
+	if cfg.Scopes != nil {
+		pluginBuilder.WithScopes(cfg.Scopes...)
+	}
+	if cfg.APIUrl != "" {
+		pluginBuilder.WithURL(cfg.APIUrl)
+	}
+	if cfg.AuthURL == "" {
+		cfg.AuthURL = build.ProductionAuthURL
+	}
+	pluginBuilder.WithAuthURL(cfg.AuthURL)
+
+	if cfg.MasAuthURL == "" {
+		cfg.MasAuthURL = build.ProductionMasAuthURL
+	}
+	pluginBuilder.WithMASAuthURL(cfg.MasAuthURL)
+
+	pluginBuilder.WithInsecure(cfg.Insecure)
+
+	pluginBuilder.WithConfig(cfgFile)
+
+	cmd.AddCommand(registry.NewServiceRegistryCommand(pfact, pluginBuilder))
 
 	// Early stage/dev preview commands
 	// cmd.AddCommand(registry.NewServiceRegistryCommand(f))

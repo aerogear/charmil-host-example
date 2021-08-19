@@ -22,8 +22,8 @@ import (
 	kafkainstanceclient "github.com/redhat-developer/app-services-sdk-go/kafkainstance/apiv1internal/client"
 	"gopkg.in/yaml.v2"
 
-	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 
 	"github.com/spf13/cobra"
 
