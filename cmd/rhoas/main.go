@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/aerogear/charmil-host-example/pkg/config"
 	"github.com/aerogear/charmil-host-example/pkg/doc"
 	"github.com/aerogear/charmil-host-example/pkg/localesettings"
 	"github.com/aerogear/charmil/core/utils/localize"
@@ -15,12 +16,26 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/debug"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/root"
+	pluginCfg "github.com/aerogear/charmil-plugin-example/pkg/config"
 	"github.com/spf13/cobra"
 )
 
 var generateDocs = os.Getenv("GENERATE_DOCS") == "true"
 
 func main() {
+
+	cfg := &config.Config{
+		Services: &config.ServiceConfigMap{
+			Kafka:           &config.KafkaConfig{},
+			ServiceRegistry: &pluginCfg.Config{},
+		},
+	}
+
+	cfgHandler, err := config.NewHandler(cfg)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 
 	locConfig := &localize.Config{
 		Language: &language.English,
@@ -35,20 +50,17 @@ func main() {
 	}
 
 	buildVersion := build.Version
-	cmdFactory := factory.New(build.Version, localizer)
+	cmdFactory := factory.New(buildVersion, localizer, cfgHandler)
 	logger, err := cmdFactory.Logger()
 	if err != nil {
 		fmt.Println(cmdFactory.IOStreams.ErrOut, err)
 		os.Exit(1)
 	}
 
-	cfgFile, err := cmdFactory.Config.Load()
-	if err != nil {
+	if err = cmdFactory.CfgHandler.Load(); err != nil {
 		fmt.Println(cmdFactory.IOStreams.ErrOut, err)
 		os.Exit(1)
 	}
-
-	fmt.Println(cfgFile)
 
 	rootCmd := root.NewRootCommand(cmdFactory, buildVersion)
 
@@ -59,22 +71,19 @@ func main() {
 		os.Exit(0)
 	}
 
-	if err = cmdFactory.Config.Save(cfgFile); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-
 	err = rootCmd.Execute()
-	if err == nil {
-		if debug.Enabled() {
-			build.CheckForUpdate(context.Background(), logger, localizer)
-		}
-		return
-	}
-
 	if err != nil {
 		logger.Error(wrapErrorf(err, localizer))
 		build.CheckForUpdate(context.Background(), logger, localizer)
+		os.Exit(1)
+	}
+
+	if debug.Enabled() {
+		build.CheckForUpdate(context.Background(), logger, localizer)
+	}
+
+	if err = cmdFactory.CfgHandler.Save(); err != nil {
+		fmt.Println(cmdFactory.IOStreams.ErrOut, err)
 		os.Exit(1)
 	}
 }

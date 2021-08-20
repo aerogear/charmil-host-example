@@ -28,7 +28,7 @@ type options struct {
 	force bool
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -37,7 +37,7 @@ type options struct {
 // NewDeleteCommand command for deleting kafkas.
 func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 	opts := &options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
@@ -67,17 +67,12 @@ func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 				return runDelete(opts)
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
 			var kafkaConfig *config.KafkaConfig
-			if cfg.Services.Kafka == kafkaConfig || cfg.Services.Kafka.ClusterID == "" {
+			if opts.CfgHandler.Cfg.Services.Kafka == kafkaConfig || opts.CfgHandler.Cfg.Services.Kafka.ClusterID == "" {
 				return errors.New(opts.localizer.LocalizeByID("kafka.common.error.noKafkaSelected"))
 			}
 
-			opts.id = cfg.Services.Kafka.ClusterID
+			opts.id = opts.CfgHandler.Cfg.Services.Kafka.ClusterID
 
 			return runDelete(opts)
 		},
@@ -91,11 +86,6 @@ func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 
 func runDelete(opts *options) error {
 	logger, err := opts.Logger()
-	if err != nil {
-		return err
-	}
-
-	cfg, err := opts.Config.Load()
 	if err != nil {
 		return err
 	}
@@ -152,7 +142,7 @@ func runDelete(opts *options) error {
 
 	logger.Info(opts.localizer.LocalizeByID("kafka.delete.log.info.deleteSuccess", localize.NewEntry("Name", kafkaName)))
 
-	currentKafka := cfg.Services.Kafka
+	currentKafka := opts.CfgHandler.Cfg.Services.Kafka
 	// this is not the current cluster, our work here is done
 	if currentKafka == nil || currentKafka.ClusterID != response.GetId() {
 		return nil
@@ -160,11 +150,7 @@ func runDelete(opts *options) error {
 
 	// the Kafka that was deleted is set as the user's current cluster
 	// since it was deleted it should be removed from the config
-	cfg.Services.Kafka = nil
-	err = opts.Config.Save(cfg)
-	if err != nil {
-		return err
-	}
+	opts.CfgHandler.Cfg.Services.Kafka = nil
 
 	return nil
 }

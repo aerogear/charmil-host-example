@@ -43,7 +43,7 @@ type options struct {
 	search       string
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -55,7 +55,7 @@ func NewListCommand(f *factory.Factory) *cobra.Command {
 		page:       0,
 		limit:      100,
 		search:     "",
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,

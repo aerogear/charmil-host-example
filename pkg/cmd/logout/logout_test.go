@@ -77,11 +77,11 @@ func TestNewLogoutCommand(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt.args.connection.Config = mockutil.NewConfigMock(tt.args.cfg)
+		tt.args.connection.CfgHandler = mockutil.NewCfgHandlerMock(tt.args.cfg)
 		// nolint
 		t.Run(tt.name, func(t *testing.T) {
 			factory := &factory.Factory{
-				Config: mockutil.NewConfigMock(tt.args.cfg),
+				CfgHandler: mockutil.NewCfgHandlerMock(tt.args.cfg),
 				Connection: func(connectionCfg *connection.Config) (connection.Connection, error) {
 					return mockutil.NewConnectionMock(tt.args.connection, nil), nil
 				},
@@ -103,8 +103,7 @@ func TestNewLogoutCommand(t *testing.T) {
 			cmd.SetOut(b)
 			_ = cmd.Execute()
 
-			cfg, _ := factory.Config.Load()
-			if cfg.AccessToken != tt.wantAccessToken && cfg.RefreshToken != tt.wantRefreshToken {
+			if factory.CfgHandler.Cfg.AccessToken != tt.wantAccessToken && factory.CfgHandler.Cfg.RefreshToken != tt.wantRefreshToken {
 				t.Errorf("Expected access token and refresh tokens to be cleared in config")
 			}
 		})

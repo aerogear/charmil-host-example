@@ -7,12 +7,13 @@ require (
 	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/Nerzal/gocloak/v7 v7.11.0
 	github.com/aerogear/charmil v0.8.2
-	github.com/aerogear/charmil-plugin-example v0.1.15
+	github.com/aerogear/charmil-plugin-example v0.2.0
 	github.com/coreos/go-oidc/v3 v3.0.0
 	github.com/golang-jwt/jwt/v4 v4.0.0
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/landoop/tableprinter v0.0.0-20201125135848-89e81fc956e7
 	github.com/openconfig/goyang v0.2.8
+	github.com/pelletier/go-toml v1.9.3
 	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
 	github.com/pkg/errors v0.9.1
 	github.com/redhat-developer/app-services-sdk-go v0.9.4

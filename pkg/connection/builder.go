@@ -34,7 +34,7 @@ type Builder struct {
 	apiURL            string
 	authURL           string
 	masAuthURL        string
-	config            config.IConfig
+	CfgHandler        *config.CfgHandler
 	logger            logging.Logger
 	transportWrapper  TransportWrapper
 	connectionConfig  *Config
@@ -123,8 +123,8 @@ func (b *Builder) DisableKeepAlives(flag bool) *Builder {
 	return b
 }
 
-func (b *Builder) WithConfig(cfg config.IConfig) *Builder {
-	b.config = cfg
+func (b *Builder) WithConfig(cfgHandler *config.CfgHandler) *Builder {
+	b.CfgHandler = cfgHandler
 	return b
 }
 
@@ -161,7 +161,7 @@ func (b *Builder) BuildContext(ctx context.Context) (connection *KeycloakConnect
 		return nil, AuthErrorf("missing client ID")
 	}
 
-	if b.config == nil {
+	if b.CfgHandler == nil {
 		return nil, fmt.Errorf("Missing IConfig")
 	}
 
@@ -279,7 +279,7 @@ func (b *Builder) BuildContext(ctx context.Context) (connection *KeycloakConnect
 		defaultRealm:      kcRealm,
 		masRealm:          masKcRealm,
 		logger:            b.logger,
-		Config:            b.config,
+		CfgHandler:        b.CfgHandler,
 		connectionConfig:  b.connectionConfig,
 	}
 

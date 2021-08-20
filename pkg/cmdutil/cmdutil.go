@@ -30,12 +30,7 @@ func FilterValidTopicNameArgs(f *factory.Factory, toComplete string) (validNames
 	validNames = []string{}
 	directive = cobra.ShellCompDirectiveNoSpace
 
-	cfg, err := f.Config.Load()
-	if err != nil {
-		return validNames, directive
-	}
-
-	if !cfg.HasKafka() {
+	if !f.CfgHandler.Cfg.HasKafka() {
 		return validNames, directive
 	}
 
@@ -44,7 +39,7 @@ func FilterValidTopicNameArgs(f *factory.Factory, toComplete string) (validNames
 		return validNames, directive
 	}
 
-	api, _, err := conn.API().KafkaAdmin(cfg.Services.Kafka.ClusterID)
+	api, _, err := conn.API().KafkaAdmin(f.CfgHandler.Cfg.Services.Kafka.ClusterID)
 	if err != nil {
 		return validNames, directive
 	}
@@ -71,12 +66,7 @@ func FilterValidConsumerGroupIDs(f *factory.Factory, toComplete string) (validID
 	validIDs = []string{}
 	directive = cobra.ShellCompDirectiveNoSpace
 
-	cfg, err := f.Config.Load()
-	if err != nil {
-		return validIDs, directive
-	}
-
-	if !cfg.HasKafka() {
+	if !f.CfgHandler.Cfg.HasKafka() {
 		return validIDs, directive
 	}
 
@@ -85,7 +75,7 @@ func FilterValidConsumerGroupIDs(f *factory.Factory, toComplete string) (validID
 		return validIDs, directive
 	}
 
-	api, _, err := conn.API().KafkaAdmin(cfg.Services.Kafka.ClusterID)
+	api, _, err := conn.API().KafkaAdmin(f.CfgHandler.Cfg.Services.Kafka.ClusterID)
 	if err != nil {
 		return validIDs, directive
 	}

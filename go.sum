@@ -95,10 +95,8 @@ github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdko
 github.com/acomagu/bufpipe v1.0.3/go.mod h1:mxdxdup/WdsKVreO5GpW4+M/1CE2sMG4jeGJ2sYmHc4=
 github.com/aerogear/charmil v0.8.2 h1:g22vYPRoJQNHKXHN1IifyqGItqgbVLiyP3kd3hOu0eQ=
 github.com/aerogear/charmil v0.8.2/go.mod h1:2v1Kr4qgKppFOu7zcppFji/6r0qDQjqpsy3JaNMk7O8=
-github.com/aerogear/charmil-host-example v0.1.1/go.mod h1:ZM353FtIQukjTIf+ugp/HeoEOXs01nl5FSsBy03zHRg=
-github.com/aerogear/charmil-plugin-example v0.1.12/go.mod h1:RVBxpZczCQ/PSROv+oI7CqziL0dhXk6/vCvFuUADFYw=
-github.com/aerogear/charmil-plugin-example v0.1.15 h1:5oG0g+gF9/yrQG9v8T5+Ax6EEn9nb4FPetYUYLt0vwM=
-github.com/aerogear/charmil-plugin-example v0.1.15/go.mod h1:fkWHcKpEG2s+jDj85iqqtFHESyfSPYIhtsCQf1+1Dtc=
+github.com/aerogear/charmil-plugin-example v0.2.0 h1:us44IkCuLP5NbWjT7r/vj3vPnn/Hvq/9VYTzdYpvpeU=
+github.com/aerogear/charmil-plugin-example v0.2.0/go.mod h1:rjP/qT9nOPexpIKXduU8nXtjpbDlJ/jyAfdIYA4ZfmY=
 github.com/agnivade/levenshtein v1.0.1/go.mod h1:CURSv5d9Uaml+FovSIICkLbAUZ9S4RqaHDIsdSBg7lM=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
@@ -564,6 +562,7 @@ github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c/go.mod h1:lzWF7FI
 github.com/pborman/getopt v0.0.0-20190409184431-ee0cd42419d3/go.mod h1:85jBQOZwpVEaDAr341tbn15RS4fCAsIst0qp7i8ex1o=
 github.com/pborman/uuid v1.2.0/go.mod h1:X/NO0urCmaxf9VXbdlT7C2Yzkj2IKimNn4k+gtPdI/k=
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
+github.com/pelletier/go-toml v1.9.3 h1:zeC5b1GviRUyKYd6OJPvBU/mcVDVoL1OhT17FCt5dSQ=
 github.com/pelletier/go-toml v1.9.3/go.mod h1:u1nR/EPcESfeI/szUZKdtJ0xRNbUoANCkoOuaOx1Y+c=
 github.com/peterbourgon/diskv v2.0.1+incompatible/go.mod h1:uqqh8zWWbv1HBMNONnaR/tNboyR3/BZd58JJSHlUSCU=
 github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2 h1:JhzVVoYvbOACxoUmOs6V/G4D5nPVUW73rKvXxP4XUJc=

@@ -25,7 +25,7 @@ type Options struct {
 	force     bool
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -35,7 +35,7 @@ type Options struct {
 func NewDeleteTopicCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
 		Connection: f.Connection,
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
 		localizer:  f.Localizer,
@@ -64,16 +64,11 @@ func NewDeleteTopicCommand(f *factory.Factory) *cobra.Command {
 				return runCmd(opts)
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
-			if !cfg.HasKafka() {
+			if !f.CfgHandler.Cfg.HasKafka() {
 				return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.noKafkaSelected"))
 			}
 
-			opts.kafkaID = cfg.Services.Kafka.ClusterID
+			opts.kafkaID = opts.CfgHandler.Cfg.Services.Kafka.ClusterID
 
 			return runCmd(opts)
 		},

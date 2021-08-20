@@ -16,7 +16,7 @@ import (
 )
 
 type Options struct {
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	IO         *iostreams.IOStreams
 	Logger     func() (logging.Logger, error)
@@ -25,7 +25,7 @@ type Options struct {
 
 func NewWhoAmICmd(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		IO:         f.IOStreams,
 		Logger:     f.Logger,
@@ -47,10 +47,6 @@ func NewWhoAmICmd(f *factory.Factory) *cobra.Command {
 }
 
 func runCmd(opts *Options) (err error) {
-	cfg, err := opts.Config.Load()
-	if err != nil {
-		return err
-	}
 
 	logger, err := opts.Logger()
 	if err != nil {
@@ -62,7 +58,7 @@ func runCmd(opts *Options) (err error) {
 		return err
 	}
 
-	accessTkn, _ := token.Parse(cfg.AccessToken)
+	accessTkn, _ := token.Parse(opts.CfgHandler.Cfg.AccessToken)
 
 	tknClaims, _ := token.MapClaims(accessTkn)
 

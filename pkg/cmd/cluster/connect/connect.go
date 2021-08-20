@@ -18,7 +18,7 @@ import (
 )
 
 type Options struct {
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection func(connectionCfg *connection.Config) (connection.Connection, error)
 	Logger     func() (logging.Logger, error)
 	IO         *iostreams.IOStreams
@@ -35,7 +35,7 @@ type Options struct {
 
 func NewConnectCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
@@ -76,18 +76,13 @@ func runConnect(opts *Options) error {
 		return err
 	}
 
-	clusterConn, err := cluster.NewKubernetesClusterConnection(connection, opts.Config, logger, opts.kubeconfigLocation, opts.IO, opts.localizer)
-	if err != nil {
-		return err
-	}
-
-	cfg, err := opts.Config.Load()
+	clusterConn, err := cluster.NewKubernetesClusterConnection(connection, opts.CfgHandler, logger, opts.kubeconfigLocation, opts.IO, opts.localizer)
 	if err != nil {
 		return err
 	}
 
 	// In future config will include Id's of other services
-	if cfg.Services.Kafka == nil || opts.ignoreContext {
+	if opts.CfgHandler.Cfg.Services.Kafka == nil || opts.ignoreContext {
 		// nolint
 		selectedKafka, err := kafka.InteractiveSelect(connection, logger)
 		if err != nil {
@@ -98,7 +93,7 @@ func runConnect(opts *Options) error {
 		}
 		opts.selectedKafka = selectedKafka.GetId()
 	} else {
-		opts.selectedKafka = cfg.Services.Kafka.ClusterID
+		opts.selectedKafka = opts.CfgHandler.Cfg.Services.Kafka.ClusterID
 	}
 
 	arguments := &cluster.ConnectArguments{

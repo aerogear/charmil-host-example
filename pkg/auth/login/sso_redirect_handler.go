@@ -15,10 +15,9 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil/core/utils/iostreams"
 	"github.com/aerogear/charmil/core/utils/localize"
+	"github.com/aerogear/charmil/core/utils/logging"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
-
-	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 //go:embed static/sso-redirect-page.html
@@ -27,7 +26,7 @@ var ssoRedirectHTMLPage string
 // handler for the SSO redirect page
 type redirectPageHandler struct {
 	IO            *iostreams.IOStreams
-	Config        config.IConfig
+	CfgHandler    *config.CfgHandler
 	Logger        logging.Logger
 	ServerAddr    string
 	Port          int
@@ -79,12 +78,6 @@ func (h *redirectPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	cfg, err := h.Config.Load()
-	if err != nil {
-		h.Logger.Error(err)
-		os.Exit(1)
-	}
-
 	username, ok := token.GetUsername(oauth2Token.AccessToken)
 	if !ok {
 		username = "unknown"
@@ -105,13 +98,8 @@ func (h *redirectPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	fmt.Fprint(w, redirectPage)
 
 	// save the received tokens to the user's config
-	cfg.AccessToken = oauth2Token.AccessToken
-	cfg.RefreshToken = oauth2Token.RefreshToken
-
-	if err = h.Config.Save(cfg); err != nil {
-		h.Logger.Error(err)
-		os.Exit(1)
-	}
+	h.CfgHandler.Cfg.AccessToken = oauth2Token.AccessToken
+	h.CfgHandler.Cfg.RefreshToken = oauth2Token.RefreshToken
 
 	h.CancelContext()
 }

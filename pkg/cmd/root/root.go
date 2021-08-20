@@ -8,8 +8,11 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/login"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/status"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/whoami"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 
 	pluginfactory "github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
+	pluginCfg "github.com/aerogear/charmil-plugin-example/pkg/config"
+
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry"
 
 	"github.com/aerogear/charmil-host-example/pkg/arguments"
@@ -33,6 +36,7 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 		Long:          f.Localizer.LocalizeByID("root.cmd.longDescription"),
 		Example:       f.Localizer.LocalizeByID("root.cmd.example"),
 	}
+
 	fs := cmd.PersistentFlags()
 	arguments.AddDebugFlag(fs)
 	// this flag comes out of the box, but has its own basic usage text, so this overrides that
@@ -58,15 +62,23 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 	cmd.AddCommand(cliversion.NewVersionCmd(f))
 	// cmd.AddCommand(config.NewConfigCommand(f))
 
-	pfact := pluginfactory.New(build.Version, nil)
+	if !f.CfgHandler.Cfg.HasServiceConfigMap() {
+		f.CfgHandler.Cfg.Services = &config.ServiceConfigMap{
+			Kafka:           &config.KafkaConfig{},
+			ServiceRegistry: &pluginCfg.Config{},
+		}
+	}
+
+	// Creates a config handler instance for plugin by passing the suitable config field.
+	// This line is responsible for interaction between plugin config and the host config file.
+	pCfgHandler := &pluginCfg.CfgHandler{
+		Cfg: f.CfgHandler.Cfg.Services.ServiceRegistry,
+	}
+
+	// Creates a plugin factory instance by passing the newly created config handler instance
+	pFactory := pluginfactory.New(build.Version, nil, pCfgHandler)
 
 	// pluginBuilder := pluginConnection.NewBuilder()
-
-	// cfgFile := config.NewFile()
-	// cfg, err := cfgFile.Load()
-	// if err != nil {
-	// 	panic(err)
-	// }
 
 	// if cfg.AccessToken != "" {
 	// 	pluginBuilder.WithAccessToken(cfg.AccessToken)
@@ -103,10 +115,10 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 
 	// pluginBuilder.WithConfig(cfgFile)
 
-	// cmd.AddCommand(registry.NewServiceRegistryCommand(pfact, pluginBuilder))
+	// cmd.AddCommand(registry.NewServiceRegistryCommand(pFactory, pluginBuilder))
 
 	// Early stage/dev preview commands
-	cmd.AddCommand(registry.NewServiceRegistryCommand(pfact))
+	cmd.AddCommand(registry.NewServiceRegistryCommand(pFactory))
 
 	return cmd
 }

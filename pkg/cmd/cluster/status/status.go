@@ -22,7 +22,7 @@ import (
 )
 
 type Options struct {
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	IO         *iostreams.IOStreams
@@ -33,7 +33,7 @@ type Options struct {
 
 func NewStatusCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
@@ -67,7 +67,7 @@ func runStatus(opts *Options) error {
 		return err
 	}
 
-	clusterConn, err := cluster.NewKubernetesClusterConnection(connection, opts.Config, logger, opts.kubeconfig, opts.IO, opts.localizer)
+	clusterConn, err := cluster.NewKubernetesClusterConnection(connection, opts.CfgHandler, logger, opts.kubeconfig, opts.IO, opts.localizer)
 	if err != nil {
 		return err
 	}
