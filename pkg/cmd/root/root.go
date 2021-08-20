@@ -79,7 +79,6 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 	pFactory := pluginfactory.New(build.Version, nil, pCfgHandler)
 
 	// pluginBuilder := pluginConnection.NewBuilder()
-
 	// if cfg.AccessToken != "" {
 	// 	pluginBuilder.WithAccessToken(cfg.AccessToken)
 	// }
@@ -105,16 +104,12 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 	// 	cfg.AuthURL = build.ProductionAuthURL
 	// }
 	// pluginBuilder.WithAuthURL(cfg.AuthURL)
-
 	// if cfg.MasAuthURL == "" {
 	// 	cfg.MasAuthURL = build.ProductionMasAuthURL
 	// }
 	// pluginBuilder.WithMASAuthURL(cfg.MasAuthURL)
-
 	// pluginBuilder.WithInsecure(cfg.Insecure)
-
 	// pluginBuilder.WithConfig(cfgFile)
-
 	// cmd.AddCommand(registry.NewServiceRegistryCommand(pFactory, pluginBuilder))
 
 	// Early stage/dev preview commands
