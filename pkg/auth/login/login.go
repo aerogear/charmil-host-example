@@ -13,16 +13,15 @@ import (
 	"github.com/aerogear/charmil-host-example/static"
 	"github.com/aerogear/charmil/core/utils/iostreams"
 	"github.com/aerogear/charmil/core/utils/localize"
+	"github.com/aerogear/charmil/core/utils/logging"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/phayes/freeport"
 	"golang.org/x/oauth2"
-
-	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 type AuthorizationCodeGrant struct {
 	HTTPClient *http.Client
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Logger     logging.Logger
 	IO         *iostreams.IOStreams
 	Localizer  localize.Localizer
@@ -121,7 +120,7 @@ func (a *AuthorizationCodeGrant) loginSSO(ctx context.Context, cfg *SSOConfig) e
 		CancelContext: cancel,
 		Ctx:           clientCtx,
 		Port:          redirectURLPort,
-		Config:        a.Config,
+		CfgHandler:    a.CfgHandler,
 		Logger:        a.Logger,
 		IO:            a.IO,
 		ServerAddr:    server.Addr,
@@ -201,7 +200,7 @@ func (a *AuthorizationCodeGrant) loginMAS(ctx context.Context, cfg *SSOConfig) e
 		CancelContext: cancel,
 		Ctx:           clientCtx,
 		Port:          redirectURLPort,
-		Config:        a.Config,
+		CfgHandler:    a.CfgHandler,
 		Logger:        a.Logger,
 		AuthURL:       cfg.AuthURL,
 		IO:            a.IO,

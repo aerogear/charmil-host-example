@@ -25,7 +25,7 @@ import (
 )
 
 type Options struct {
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	IO         *iostreams.IOStreams
@@ -48,7 +48,7 @@ type consumerGroupRow struct {
 // NewListConsumerGroupCommand creates a new command to list consumer groups
 func NewListConsumerGroupCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
@@ -74,16 +74,11 @@ func NewListConsumerGroupCommand(f *factory.Factory) *cobra.Command {
 				return errors.New(opts.localizer.LocalizeByID("kafka.common.validation.size.error.invalid.minValue", localize.NewEntry("Size", opts.size)))
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
-			if !cfg.HasKafka() {
+			if !f.CfgHandler.Cfg.HasKafka() {
 				return errors.New(opts.localizer.LocalizeByID("kafka.consumerGroup.common.error.noKafkaSelected"))
 			}
 
-			opts.kafkaID = cfg.Services.Kafka.ClusterID
+			opts.kafkaID = opts.CfgHandler.Cfg.Services.Kafka.ClusterID
 
 			return runList(opts)
 		},

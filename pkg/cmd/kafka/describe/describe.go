@@ -28,7 +28,7 @@ type Options struct {
 	outputFormat string
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	localizer  localize.Localizer
 }
@@ -37,7 +37,7 @@ type Options struct {
 // or by using the kafka instance set in the config, if any
 func NewDescribeCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		IO:         f.IOStreams,
 		localizer:  f.Localizer,
@@ -71,17 +71,12 @@ func NewDescribeCommand(f *factory.Factory) *cobra.Command {
 				return runDescribe(opts)
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
 			var kafkaConfig *config.KafkaConfig
-			if cfg.Services.Kafka == kafkaConfig || cfg.Services.Kafka.ClusterID == "" {
+			if opts.CfgHandler.Cfg.Services.Kafka == kafkaConfig || opts.CfgHandler.Cfg.Services.Kafka.ClusterID == "" {
 				return errors.New(opts.localizer.LocalizeByID("kafka.common.error.noKafkaSelected"))
 			}
 
-			opts.id = cfg.Services.Kafka.ClusterID
+			opts.id = opts.CfgHandler.Cfg.Services.Kafka.ClusterID
 
 			return runDescribe(opts)
 		},

@@ -52,7 +52,7 @@ type KeycloakConnection struct {
 	defaultRealm      string
 	masRealm          string
 	logger            logging.Logger
-	Config            config.IConfig
+	CfgHandler        *config.CfgHandler
 	connectionConfig  *Config
 }
 
@@ -60,11 +60,6 @@ type KeycloakConnection struct {
 // The new tokens will have an increased expiry time and are persisted in the config and connection
 func (c *KeycloakConnection) RefreshTokens(ctx context.Context) (err error) {
 	c.logger.Infoln("Refreshing tokens")
-
-	cfg, err := c.Config.Load()
-	if err != nil {
-		return err
-	}
 
 	// track if we need to update the config with new token values
 	var cfgChanged bool
@@ -77,12 +72,12 @@ func (c *KeycloakConnection) RefreshTokens(ctx context.Context) (err error) {
 
 		if refreshedTk.AccessToken != c.Token.AccessToken {
 			c.Token.AccessToken = refreshedTk.AccessToken
-			cfg.AccessToken = refreshedTk.AccessToken
+			c.CfgHandler.Cfg.AccessToken = refreshedTk.AccessToken
 			cfgChanged = true
 		}
 		if refreshedTk.RefreshToken != c.Token.RefreshToken {
 			c.Token.RefreshToken = refreshedTk.RefreshToken
-			cfg.RefreshToken = refreshedTk.RefreshToken
+			c.CfgHandler.Cfg.RefreshToken = refreshedTk.RefreshToken
 			cfgChanged = true
 		}
 	}
@@ -95,12 +90,12 @@ func (c *KeycloakConnection) RefreshTokens(ctx context.Context) (err error) {
 		}
 		if refreshedMasTk.AccessToken != c.MASToken.AccessToken {
 			c.MASToken.AccessToken = refreshedMasTk.AccessToken
-			cfg.MasAccessToken = refreshedMasTk.AccessToken
+			c.CfgHandler.Cfg.MasAccessToken = refreshedMasTk.AccessToken
 			cfgChanged = true
 		}
 		if refreshedMasTk.RefreshToken != c.MASToken.RefreshToken {
 			c.MASToken.RefreshToken = refreshedMasTk.RefreshToken
-			cfg.MasRefreshToken = refreshedMasTk.RefreshToken
+			c.CfgHandler.Cfg.MasRefreshToken = refreshedMasTk.RefreshToken
 			cfgChanged = true
 		}
 	}
@@ -109,9 +104,6 @@ func (c *KeycloakConnection) RefreshTokens(ctx context.Context) (err error) {
 		return nil
 	}
 
-	if err = c.Config.Save(cfg); err != nil {
-		return err
-	}
 	c.logger.Infoln("Tokens refreshed")
 
 	return nil
@@ -138,17 +130,12 @@ func (c *KeycloakConnection) Logout(ctx context.Context) (err error) {
 	c.MASToken.AccessToken = ""
 	c.MASToken.RefreshToken = ""
 
-	cfg, err := c.Config.Load()
-	if err != nil {
-		return err
-	}
+	c.CfgHandler.Cfg.AccessToken = ""
+	c.CfgHandler.Cfg.RefreshToken = ""
+	c.CfgHandler.Cfg.MasAccessToken = ""
+	c.CfgHandler.Cfg.MasRefreshToken = ""
 
-	cfg.AccessToken = ""
-	cfg.RefreshToken = ""
-	cfg.MasAccessToken = ""
-	cfg.MasRefreshToken = ""
-
-	return c.Config.Save(cfg)
+	return nil
 }
 
 // API Creates a new API type which is a single type for multiple APIs

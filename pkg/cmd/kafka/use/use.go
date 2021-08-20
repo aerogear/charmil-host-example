@@ -3,7 +3,6 @@ package use
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil/core/utils/iostreams"
@@ -28,7 +27,7 @@ type Options struct {
 	interactive bool
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -36,7 +35,7 @@ type Options struct {
 
 func NewUseCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
@@ -93,11 +92,6 @@ func runUse(opts *Options) error {
 		return err
 	}
 
-	cfg, err := opts.Config.Load()
-	if err != nil {
-		return err
-	}
-
 	connection, err := opts.Connection(connection.DefaultConfigSkipMasAuth)
 	if err != nil {
 		return err
@@ -125,11 +119,7 @@ func runUse(opts *Options) error {
 	}
 
 	nameTmplEntry := localize.NewEntry("Name", res.GetName())
-	cfg.Services.Kafka = &kafkaConfig
-	if err := opts.Config.Save(cfg); err != nil {
-		saveErrMsg := opts.localizer.LocalizeByID("kafka.use.error.saveError", nameTmplEntry)
-		return fmt.Errorf("%v: %w", saveErrMsg, err)
-	}
+	opts.CfgHandler.Cfg.Services.Kafka = &kafkaConfig
 
 	logger.Info(opts.localizer.LocalizeByID("kafka.use.log.info.useSuccess", nameTmplEntry))
 

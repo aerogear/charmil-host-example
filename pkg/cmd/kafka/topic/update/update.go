@@ -47,7 +47,7 @@ type Options struct {
 	cleanupPolicy     string
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -58,7 +58,7 @@ type Options struct {
 func NewUpdateTopicCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
 		Connection: f.Connection,
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
 		localizer:  f.Localizer,
@@ -153,16 +153,11 @@ func NewUpdateTopicCommand(f *factory.Factory) *cobra.Command {
 				}
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
-			if !cfg.HasKafka() {
+			if !f.CfgHandler.Cfg.HasKafka() {
 				return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.noKafkaSelected"))
 			}
 
-			opts.kafkaID = cfg.Services.Kafka.ClusterID
+			opts.kafkaID = opts.CfgHandler.Cfg.Services.Kafka.ClusterID
 
 			return runCmd(opts)
 		},

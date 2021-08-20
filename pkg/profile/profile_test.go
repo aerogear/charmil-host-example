@@ -20,9 +20,8 @@ func TestEnableDevPreviewConfig(t *testing.T) {
 
 	localizer, _ := localize.New(locConfig)
 	testVal := true
-	factoryObj := factory.New("dev", localizer)
+	factoryObj := factory.New("dev", localizer, mockutil.NewCfgHandlerMock(&config.Config{}))
 
-	factoryObj.Config = mockutil.NewConfigMock(&config.Config{})
 	config, err := EnableDevPreview(factoryObj, testVal)
 	if config.DevPreviewEnabled == false {
 		t.Errorf("TestEnableDevPreviewConfig config = %v, want %v", config.DevPreviewEnabled, true)
@@ -50,8 +49,7 @@ func TestDevPreviewEnabled(t *testing.T) {
 	}
 
 	localizer, _ := localize.New(locConfig)
-	factoryObj := factory.New("dev", localizer)
-	factoryObj.Config = mockutil.NewConfigMock(&config.Config{})
+	factoryObj := factory.New("dev", localizer, mockutil.NewCfgHandlerMock(&config.Config{}))
 	testVal := false
 	_, err := EnableDevPreview(factoryObj, testVal)
 	if err != nil {

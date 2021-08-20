@@ -22,14 +22,14 @@ type Options struct {
 	outputFormat string
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	localizer  localize.Localizer
 }
 
 func NewDescribeCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		IO:         f.IOStreams,
 		localizer:  f.Localizer,

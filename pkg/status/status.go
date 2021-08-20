@@ -8,15 +8,14 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	"github.com/aerogear/charmil-host-example/pkg/api/kas"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil-host-example/pkg/kafka/kafkaerr"
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 
-	kas "github.com/aerogear/charmil-host-example/pkg/api/kas"
 	"github.com/aerogear/charmil-host-example/pkg/config"
-	"github.com/openconfig/goyang/pkg/indent"
-
 	"github.com/aerogear/charmil/core/utils/logging"
+	"github.com/openconfig/goyang/pkg/indent"
 )
 
 const tagTitle = "title"
@@ -34,7 +33,7 @@ type KafkaStatus struct {
 }
 
 type Options struct {
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Logger     func() (logging.Logger, error)
 	Connection connection.Connection
 
@@ -44,10 +43,7 @@ type Options struct {
 
 // Get gets the status of all services currently set in the user config
 func Get(ctx context.Context, opts *Options) (status *Status, ok bool, err error) {
-	cfg, err := opts.Config.Load()
-	if err != nil {
-		return nil, false, err
-	}
+
 	logger, err := opts.Logger()
 	if err != nil {
 		return nil, false, err
@@ -57,8 +53,8 @@ func Get(ctx context.Context, opts *Options) (status *Status, ok bool, err error
 	api := opts.Connection.API()
 
 	if stringInSlice("kafka", opts.Services) {
-		kafkaCfg := cfg.Services.Kafka
-		if cfg.HasKafka() {
+		kafkaCfg := opts.CfgHandler.Cfg.Services.Kafka
+		if opts.CfgHandler.Cfg.HasKafka() {
 			// nolint:govet
 			kafkaStatus, err := getKafkaStatus(ctx, api.Kafka(), kafkaCfg.ClusterID)
 			if err != nil {

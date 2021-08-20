@@ -22,7 +22,7 @@ type Options struct {
 	skipConfirm bool
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -32,7 +32,7 @@ type Options struct {
 func NewDeleteConsumerGroupCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
 		Connection: f.Connection,
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		IO:         f.IOStreams,
 		Logger:     f.Logger,
 		localizer:  f.Localizer,
@@ -49,16 +49,11 @@ func NewDeleteConsumerGroupCommand(f *factory.Factory) *cobra.Command {
 				return runCmd(opts)
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
-			if !cfg.HasKafka() {
+			if !f.CfgHandler.Cfg.HasKafka() {
 				return errors.New(opts.localizer.LocalizeByID("kafka.consumerGroup.common.error.noKafkaSelected"))
 			}
 
-			opts.kafkaID = cfg.Services.Kafka.ClusterID
+			opts.kafkaID = opts.CfgHandler.Cfg.Services.Kafka.ClusterID
 
 			return runCmd(opts)
 		},

@@ -12,8 +12,6 @@ import (
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 
 	"github.com/aerogear/charmil-host-example/pkg/api/kas"
-	"github.com/aerogear/charmil-host-example/pkg/config"
-	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil-host-example/pkg/kafka/kafkaerr"
 	"github.com/aerogear/charmil/core/utils/iostreams"
 	"github.com/aerogear/charmil/core/utils/localize"
@@ -26,19 +24,21 @@ import (
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/aerogear/charmil/core/utils/color"
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 
-	"github.com/aerogear/charmil/core/utils/color"
+	"github.com/aerogear/charmil-host-example/pkg/config"
+	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 // KubernetesCluster is a type which represents a Kubernetes cluster
 type KubernetesCluster struct {
 	connection connection.Connection
-	config     config.IConfig
+	CfgHandler *config.CfgHandler
 	logger     logging.Logger
 
 	clientset          *kubernetes.Clientset
@@ -57,7 +57,7 @@ var serviceAccountSecretName = "rh-cloud-services-service-account"
 
 // NewKubernetesClusterConnection configures and connects to a Kubernetes cluster
 func NewKubernetesClusterConnection(connection connection.Connection,
-	config config.IConfig,
+	cfgHandler *config.CfgHandler,
 	logger logging.Logger,
 	kubeconfig string,
 	io *iostreams.IOStreams, localizer localize.Localizer) (Cluster, error) {
@@ -98,7 +98,7 @@ func NewKubernetesClusterConnection(connection connection.Connection,
 
 	k8sCluster := &KubernetesCluster{
 		connection,
-		config,
+		cfgHandler,
 		logger,
 		clientset,
 		clientconfig,
