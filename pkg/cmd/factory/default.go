@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/aerogear/charmil-host-example/internal/build"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/debug"
 	"github.com/aerogear/charmil-host-example/pkg/config"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
@@ -51,40 +52,40 @@ func New(cliVersion string, localizer localize.Localizer, cfgHandler *config.Cfg
 
 		builder := connection.NewBuilder()
 
-		// if cfg.AccessToken != "" {
-		// 	builder.WithAccessToken(cfg.AccessToken)
-		// }
-		// if cfg.RefreshToken != "" {
-		// 	builder.WithRefreshToken(cfg.RefreshToken)
-		// }
-		// if cfg.MasAccessToken != "" {
-		// 	builder.WithMASAccessToken(cfg.MasAccessToken)
-		// }
-		// if cfg.MasRefreshToken != "" {
-		// 	builder.WithMASRefreshToken(cfg.MasRefreshToken)
-		// }
-		// if cfg.ClientID != "" {
-		// 	builder.WithClientID(cfg.ClientID)
-		// }
-		// if cfg.Scopes != nil {
-		// 	builder.WithScopes(cfg.Scopes...)
-		// }
-		// if cfg.APIUrl != "" {
-		// 	builder.WithURL(cfg.APIUrl)
-		// }
-		// if cfg.AuthURL == "" {
-		// 	cfg.AuthURL = build.ProductionAuthURL
-		// }
-		// builder.WithAuthURL(cfg.AuthURL)
+		if cfgHandler.Cfg.AccessToken != "" {
+			builder.WithAccessToken(cfgHandler.Cfg.AccessToken)
+		}
+		if cfgHandler.Cfg.RefreshToken != "" {
+			builder.WithRefreshToken(cfgHandler.Cfg.RefreshToken)
+		}
+		if cfgHandler.Cfg.MasAccessToken != "" {
+			builder.WithMASAccessToken(cfgHandler.Cfg.MasAccessToken)
+		}
+		if cfgHandler.Cfg.MasRefreshToken != "" {
+			builder.WithMASRefreshToken(cfgHandler.Cfg.MasRefreshToken)
+		}
+		if cfgHandler.Cfg.ClientID != "" {
+			builder.WithClientID(cfgHandler.Cfg.ClientID)
+		}
+		if cfgHandler.Cfg.Scopes != nil {
+			builder.WithScopes(cfgHandler.Cfg.Scopes...)
+		}
+		if cfgHandler.Cfg.APIUrl != "" {
+			builder.WithURL(cfgHandler.Cfg.APIUrl)
+		}
+		if cfgHandler.Cfg.AuthURL == "" {
+			cfgHandler.Cfg.AuthURL = build.ProductionAuthURL
+		}
+		builder.WithAuthURL(cfgHandler.Cfg.AuthURL)
 
-		// if cfg.MasAuthURL == "" {
-		// 	cfg.MasAuthURL = build.ProductionMasAuthURL
-		// }
-		// builder.WithMASAuthURL(cfg.MasAuthURL)
+		if cfgHandler.Cfg.MasAuthURL == "" {
+			cfgHandler.Cfg.MasAuthURL = build.ProductionMasAuthURL
+		}
+		builder.WithMASAuthURL(cfgHandler.Cfg.MasAuthURL)
 
-		// builder.WithInsecure(cfg.Insecure)
+		builder.WithInsecure(cfgHandler.Cfg.Insecure)
 
-		// builder.WithConfig(cfgFile)
+		builder.WithConfig(cfgHandler)
 
 		// create a logger if it has not already been created
 		logger, err := loggerFunc()
