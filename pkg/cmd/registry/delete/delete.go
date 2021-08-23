@@ -28,7 +28,7 @@ type options struct {
 	force bool
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -36,7 +36,7 @@ type options struct {
 
 func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 	opts := &options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
@@ -45,9 +45,9 @@ func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:     "delete",
-		Short:   f.Localizer.MustLocalize("registry.cmd.delete.shortDescription"),
-		Long:    f.Localizer.MustLocalize("registry.cmd.delete.longDescription"),
-		Example: f.Localizer.MustLocalize("registry.cmd.delete.example"),
+		Short:   f.Localizer.LocalizeByID("registry.cmd.delete.shortDescription"),
+		Long:    f.Localizer.LocalizeByID("registry.cmd.delete.longDescription"),
+		Example: f.Localizer.LocalizeByID("registry.cmd.delete.example"),
 		Args:    cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if !opts.IO.CanPrompt() && !opts.force {
@@ -59,42 +59,32 @@ func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			if opts.name != "" && opts.id != "" {
-				return errors.New(opts.localizer.MustLocalize("service.error.idAndNameCannotBeUsed"))
+				return errors.New(opts.localizer.LocalizeByID("service.error.idAndNameCannotBeUsed"))
 			}
 
 			if opts.id != "" || opts.name != "" {
 				return runDelete(opts)
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
 			var serviceRegistryConfig *config.ServiceRegistryConfig
-			if cfg.Services.ServiceRegistry == serviceRegistryConfig || cfg.Services.ServiceRegistry.InstanceID == "" {
-				return errors.New(opts.localizer.MustLocalize("registry.common.error.noServiceSelected"))
+			if opts.CfgHandler.Cfg.Services.ServiceRegistry == serviceRegistryConfig || opts.CfgHandler.Cfg.Services.ServiceRegistry.InstanceID == "" {
+				return errors.New(opts.localizer.LocalizeByID("registry.common.error.noServiceSelected"))
 			}
 
-			opts.id = fmt.Sprint(cfg.Services.ServiceRegistry.InstanceID)
+			opts.id = fmt.Sprint(opts.CfgHandler.Cfg.Services.ServiceRegistry.InstanceID)
 
 			return runDelete(opts)
 		},
 	}
 
-	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.MustLocalize("registry.common.flag.id"))
-	cmd.Flags().BoolVarP(&opts.force, "yes", "y", false, opts.localizer.MustLocalize("registry.common.flag.yes"))
+	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.LocalizeByID("registry.common.flag.id"))
+	cmd.Flags().BoolVarP(&opts.force, "yes", "y", false, opts.localizer.LocalizeByID("registry.common.flag.yes"))
 
 	return cmd
 }
 
 func runDelete(opts *options) error {
 	logger, err := opts.Logger()
-	if err != nil {
-		return err
-	}
-
-	cfg, err := opts.Config.Load()
 	if err != nil {
 		return err
 	}
@@ -121,12 +111,12 @@ func runDelete(opts *options) error {
 	}
 
 	registryName := registry.GetName()
-	logger.Info(opts.localizer.MustLocalize("registry.delete.log.info.deletingService", localize.NewEntry("Name", registryName)))
+	logger.Info(opts.localizer.LocalizeByID("registry.delete.log.info.deletingService", localize.NewEntry("Name", registryName)))
 	logger.Info("")
 
 	if !opts.force {
 		promptConfirmName := &survey.Input{
-			Message: opts.localizer.MustLocalize("registry.delete.input.confirmName.message"),
+			Message: opts.localizer.LocalizeByID("registry.delete.input.confirmName.message"),
 		}
 
 		var confirmedName string
@@ -136,12 +126,12 @@ func runDelete(opts *options) error {
 		}
 
 		if confirmedName != registryName {
-			logger.Info(opts.localizer.MustLocalize("registry.delete.log.info.incorrectNameConfirmation"))
+			logger.Info(opts.localizer.LocalizeByID("registry.delete.log.info.incorrectNameConfirmation"))
 			return nil
 		}
 	}
 
-	logger.Debug("Deleting Service registry", fmt.Sprintf("\"%s\"", registryName))
+	logger.Infoln("Deleting Service registry", fmt.Sprintf("\"%s\"", registryName))
 
 	a := api.ServiceRegistryMgmt().DeleteRegistry(context.Background(), registry.GetId())
 	_, err = a.Execute()
@@ -150,9 +140,9 @@ func runDelete(opts *options) error {
 		return err
 	}
 
-	logger.Info(opts.localizer.MustLocalize("registry.delete.log.info.deleteSuccess", localize.NewEntry("Name", registryName)))
+	logger.Info(opts.localizer.LocalizeByID("registry.delete.log.info.deleteSuccess", localize.NewEntry("Name", registryName)))
 
-	currentContextRegistry := cfg.Services.ServiceRegistry
+	currentContextRegistry := opts.CfgHandler.Cfg.Services.ServiceRegistry
 	// this is not the current cluster, our work here is done
 	if currentContextRegistry == nil || currentContextRegistry.InstanceID != opts.id {
 		return nil
@@ -160,11 +150,7 @@ func runDelete(opts *options) error {
 
 	// the service that was deleted is set as the user's current cluster
 	// since it was deleted it should be removed from the config
-	cfg.Services.ServiceRegistry = nil
-	err = opts.Config.Save(cfg)
-	if err != nil {
-		return err
-	}
+	opts.CfgHandler.Cfg.Services.ServiceRegistry = nil
 
 	return nil
 }

@@ -25,7 +25,7 @@ type Options struct {
 	outputFormat string
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	localizer  localize.Localizer
 }
@@ -34,7 +34,7 @@ type Options struct {
 // or by using the service instance set in the config, if any
 func NewDescribeCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		IO:         f.IOStreams,
 		localizer:  f.Localizer,
@@ -42,9 +42,9 @@ func NewDescribeCommand(f *factory.Factory) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:     "describe",
-		Short:   f.Localizer.MustLocalize("registry.cmd.describe.shortDescription"),
-		Long:    f.Localizer.MustLocalize("registry.cmd.describe.longDescription"),
-		Example: f.Localizer.MustLocalize("registry.cmd.describe.example"),
+		Short:   f.Localizer.LocalizeByID("registry.cmd.describe.shortDescription"),
+		Long:    f.Localizer.LocalizeByID("registry.cmd.describe.longDescription"),
+		Example: f.Localizer.LocalizeByID("registry.cmd.describe.example"),
 		Args:    cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			validOutputFormats := flagutil.ValidOutputFormats
@@ -57,31 +57,26 @@ func NewDescribeCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			if opts.name != "" && opts.id != "" {
-				return errors.New(opts.localizer.MustLocalize("service.error.idAndNameCannotBeUsed"))
+				return errors.New(opts.localizer.LocalizeByID("service.error.idAndNameCannotBeUsed"))
 			}
 
 			if opts.id != "" || opts.name != "" {
 				return runDescribe(opts)
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
 			var registryConfig *config.ServiceRegistryConfig
-			if cfg.Services.ServiceRegistry == registryConfig || cfg.Services.ServiceRegistry.InstanceID == "" {
-				return errors.New(opts.localizer.MustLocalize("registry.common.error.noServiceSelected"))
+			if opts.CfgHandler.Cfg.Services.ServiceRegistry == registryConfig || opts.CfgHandler.Cfg.Services.ServiceRegistry.InstanceID == "" {
+				return errors.New(opts.localizer.LocalizeByID("registry.common.error.noServiceSelected"))
 			}
 
-			opts.id = cfg.Services.ServiceRegistry.InstanceID
+			opts.id = opts.CfgHandler.Cfg.Services.ServiceRegistry.InstanceID
 
 			return runDescribe(opts)
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.MustLocalize("registry.cmd.flag.output.description"))
-	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.MustLocalize("registry.common.flag.id"))
+	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.LocalizeByID("registry.cmd.flag.output.description"))
+	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.LocalizeByID("registry.common.flag.id"))
 
 	flagutil.EnableOutputFlagCompletion(cmd)
 

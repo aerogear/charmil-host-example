@@ -8,10 +8,8 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/login"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/status"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/whoami"
-	"github.com/aerogear/charmil-host-example/pkg/config"
 
 	pluginfactory "github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
-	pluginCfg "github.com/aerogear/charmil-plugin-example/pkg/config"
 
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry"
 
@@ -62,21 +60,21 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 	cmd.AddCommand(cliversion.NewVersionCmd(f))
 	// cmd.AddCommand(config.NewConfigCommand(f))
 
-	if !f.CfgHandler.Cfg.HasServiceConfigMap() {
-		f.CfgHandler.Cfg.Services = &config.ServiceConfigMap{
-			Kafka:           &config.KafkaConfig{},
-			ServiceRegistry: &pluginCfg.Config{},
-		}
-	}
+	// if !f.CfgHandler.Cfg.HasServiceConfigMap() {
+	// 	f.CfgHandler.Cfg.Services = &config.ServiceConfigMap{
+	// 		Kafka:           &config.KafkaConfig{},
+	// 		ServiceRegistry: &pluginCfg.Config{},
+	// 	}
+	// }
 
 	// Creates a config handler instance for plugin by passing the suitable config field.
 	// This line is responsible for interaction between plugin config and the host config file.
-	pCfgHandler := &pluginCfg.CfgHandler{
-		Cfg: f.CfgHandler.Cfg.Services.ServiceRegistry,
-	}
+	// pCfgHandler := &pluginCfg.CfgHandler{
+	// 	Cfg: f.CfgHandler.Cfg.Services.ServiceRegistry,
+	// }
 
 	// Creates a plugin factory instance by passing the newly created config handler instance
-	pFactory := pluginfactory.New(build.Version, nil, pCfgHandler)
+	pFactory := pluginfactory.New(build.Version, nil, nil)
 
 	// pluginBuilder := pluginConnection.NewBuilder()
 	// if cfg.AccessToken != "" {

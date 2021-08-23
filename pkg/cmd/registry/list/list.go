@@ -40,7 +40,7 @@ type options struct {
 	search       string
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -49,7 +49,7 @@ type options struct {
 // NewListCommand creates a new command for listing service registries.
 func NewListCommand(f *factory.Factory) *cobra.Command {
 	opts := &options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
@@ -58,9 +58,9 @@ func NewListCommand(f *factory.Factory) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:     "list",
-		Short:   f.Localizer.MustLocalize("registry.cmd.list.shortDescription"),
-		Long:    f.Localizer.MustLocalize("registry.cmd.list.longDescription"),
-		Example: f.Localizer.MustLocalize("registry.cmd.list.example"),
+		Short:   f.Localizer.LocalizeByID("registry.cmd.list.shortDescription"),
+		Long:    f.Localizer.LocalizeByID("registry.cmd.list.longDescription"),
+		Example: f.Localizer.LocalizeByID("registry.cmd.list.example"),
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.outputFormat != "" && !flagutil.IsValidInput(opts.outputFormat, flagutil.ValidOutputFormats...) {
@@ -71,9 +71,9 @@ func NewListCommand(f *factory.Factory) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "", opts.localizer.MustLocalize("registry.cmd.flag.output.description"))
-	cmd.Flags().Int32VarP(&opts.page, "page", "", cmdutil.ConvertPageValueToInt32(build.DefaultPageNumber), opts.localizer.MustLocalize("registry.list.flag.page"))
-	cmd.Flags().Int32VarP(&opts.limit, "limit", "", 100, opts.localizer.MustLocalize("registry.list.flag.limit"))
+	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "", opts.localizer.LocalizeByID("registry.cmd.flag.output.description"))
+	cmd.Flags().Int32VarP(&opts.page, "page", "", cmdutil.ConvertPageValueToInt32(build.DefaultPageNumber), opts.localizer.LocalizeByID("registry.list.flag.page"))
+	cmd.Flags().Int32VarP(&opts.limit, "limit", "", 100, opts.localizer.LocalizeByID("registry.list.flag.limit"))
 
 	flagutil.EnableOutputFlagCompletion(cmd)
 
@@ -99,7 +99,7 @@ func runList(opts *options) error {
 
 	if opts.search != "" {
 		query := buildQuery(opts.search)
-		logger.Debug("Filtering Service Registries with query", query)
+		logger.Infoln("Filtering Service Registries with query", query)
 		a = a.Search(query)
 	}
 
@@ -109,7 +109,7 @@ func runList(opts *options) error {
 	}
 
 	if len(response.Items) == 0 && opts.outputFormat == "" {
-		logger.Info(opts.localizer.MustLocalize("registry.common.log.info.noInstances"))
+		logger.Info(opts.localizer.LocalizeByID("registry.common.log.info.noInstances"))
 		return nil
 	}
 

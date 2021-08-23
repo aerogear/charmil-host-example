@@ -16,7 +16,6 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/cmd/debug"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/root"
-	pluginCfg "github.com/aerogear/charmil-plugin-example/pkg/config"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +26,7 @@ func main() {
 	cfg := &config.Config{
 		Services: &config.ServiceConfigMap{
 			Kafka:           &config.KafkaConfig{},
-			ServiceRegistry: &pluginCfg.Config{},
+			ServiceRegistry: &config.ServiceRegistryConfig{},
 		},
 	}
 

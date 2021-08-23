@@ -1,7 +1,5 @@
 package config
 
-import pluginCfg "github.com/aerogear/charmil-plugin-example/pkg/config"
-
 // Config is a type which describes the properties which can be in the config
 type Config struct {
 	AccessToken       string            `json:"access_token" doc:"Bearer access token."`
@@ -20,13 +18,18 @@ type Config struct {
 
 // ServiceConfigMap is a map of configs for the application services
 type ServiceConfigMap struct {
-	Kafka           *KafkaConfig      `json:"kafka"`
-	ServiceRegistry *pluginCfg.Config `json:"serviceregistry"`
+	Kafka           *KafkaConfig           `json:"kafka"`
+	ServiceRegistry *ServiceRegistryConfig `json:"serviceregistry"`
 }
 
 // KafkaConfig is the config for the Kafka service
 type KafkaConfig struct {
 	ClusterID string `json:"clusterId"`
+}
+
+type ServiceRegistryConfig struct {
+	InstanceID string `json:"instanceId"`
+	Name       string `json:"name"`
 }
 
 func (c *Config) HasKafka() bool {

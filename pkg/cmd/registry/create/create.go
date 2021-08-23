@@ -3,7 +3,6 @@ package create
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/aerogear/charmil-host-example/pkg/serviceregistry"
 	"github.com/aerogear/charmil/core/utils/localize"
@@ -36,7 +35,7 @@ type Options struct {
 	interactive bool
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -46,7 +45,7 @@ type Options struct {
 func NewCreateCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
 		IO:         f.IOStreams,
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		localizer:  f.Localizer,
@@ -54,9 +53,9 @@ func NewCreateCommand(f *factory.Factory) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:     "create",
-		Short:   f.Localizer.MustLocalize("registry.cmd.create.shortDescription"),
-		Long:    f.Localizer.MustLocalize("registry.cmd.create.longDescription"),
-		Example: f.Localizer.MustLocalize("registry.cmd.create.example"),
+		Short:   f.Localizer.LocalizeByID("registry.cmd.create.shortDescription"),
+		Long:    f.Localizer.LocalizeByID("registry.cmd.create.longDescription"),
+		Example: f.Localizer.LocalizeByID("registry.cmd.create.example"),
 		Args:    cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) > 0 {
@@ -68,7 +67,7 @@ func NewCreateCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			if !opts.IO.CanPrompt() && opts.name == "" {
-				return errors.New(opts.localizer.MustLocalize("registry.cmd.create.error.name.requiredWhenNonInteractive"))
+				return errors.New(opts.localizer.LocalizeByID("registry.cmd.create.error.name.requiredWhenNonInteractive"))
 			} else if opts.name == "" {
 				opts.interactive = true
 			}
@@ -82,8 +81,8 @@ func NewCreateCommand(f *factory.Factory) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.MustLocalize("registry.cmd.flag.output.description"))
-	cmd.Flags().BoolVar(&opts.autoUse, "use", true, opts.localizer.MustLocalize("registry.cmd.create.flag.use.description"))
+	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.LocalizeByID("registry.cmd.flag.output.description"))
+	cmd.Flags().BoolVar(&opts.autoUse, "use", true, opts.localizer.LocalizeByID("registry.cmd.create.flag.use.description"))
 
 	flagutil.EnableOutputFlagCompletion(cmd)
 
@@ -96,14 +95,9 @@ func runCreate(opts *Options) error {
 		return err
 	}
 
-	cfg, err := opts.Config.Load()
-	if err != nil {
-		return err
-	}
-
 	var payload *srsmgmtv1.RegistryCreateRest
 	if opts.interactive {
-		logger.Debug()
+		logger.Infoln()
 
 		payload, err = promptPayload(opts)
 		if err != nil {
@@ -127,11 +121,11 @@ func runCreate(opts *Options) error {
 		return err
 	}
 	if !termsAccepted && termsURL != "" {
-		logger.Info(opts.localizer.MustLocalize("service.info.termsCheck", localize.NewEntry("TermsURL", termsURL)))
+		logger.Info(opts.localizer.LocalizeByID("service.info.termsCheck", localize.NewEntry("TermsURL", termsURL)))
 		return nil
 	}
 
-	logger.Info(opts.localizer.MustLocalize("registry.cmd.create.info.action", localize.NewEntry("Name", payload.GetName())))
+	logger.Info(opts.localizer.LocalizeByID("registry.cmd.create.info.action", localize.NewEntry("Name", payload.GetName())))
 
 	response, _, err := connection.API().
 		ServiceRegistryMgmt().
@@ -142,7 +136,7 @@ func runCreate(opts *Options) error {
 		return err
 	}
 
-	logger.Info(opts.localizer.MustLocalize("registry.cmd.create.info.successMessage"))
+	logger.Info(opts.localizer.LocalizeByID("registry.cmd.create.info.successMessage"))
 
 	dump.PrintDataInFormat(opts.outputFormat, response, opts.IO.Out)
 
@@ -152,13 +146,10 @@ func runCreate(opts *Options) error {
 	}
 
 	if opts.autoUse {
-		logger.Debug("Auto-use is set, updating the current instance")
-		cfg.Services.ServiceRegistry = registryConfig
-		if err := opts.Config.Save(cfg); err != nil {
-			return fmt.Errorf("%v: %w", opts.localizer.MustLocalize("registry.cmd.create.error.couldNotUse"), err)
-		}
+		logger.Infoln("Auto-use is set, updating the current instance")
+		opts.CfgHandler.Cfg.Services.ServiceRegistry = registryConfig
 	} else {
-		logger.Debug("Auto-use is not set, skipping updating the current instance")
+		logger.Infoln("Auto-use is not set, skipping updating the current instance")
 	}
 
 	return nil
@@ -176,8 +167,8 @@ func promptPayload(opts *Options) (payload *srsmgmtv1.RegistryCreateRest, err er
 	}{}
 
 	promptName := &survey.Input{
-		Message: opts.localizer.MustLocalize("registry.cmd.create.input.name.message"),
-		Help:    opts.localizer.MustLocalize("registry.cmd.create.input.name.help"),
+		Message: opts.localizer.LocalizeByID("registry.cmd.create.input.name.message"),
+		Help:    opts.localizer.LocalizeByID("registry.cmd.create.input.name.help"),
 	}
 
 	err = survey.AskOne(promptName, &answers.Name, survey.WithValidator(serviceregistry.ValidateName))
