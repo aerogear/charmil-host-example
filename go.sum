@@ -95,6 +95,8 @@ github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdko
 github.com/acomagu/bufpipe v1.0.3/go.mod h1:mxdxdup/WdsKVreO5GpW4+M/1CE2sMG4jeGJ2sYmHc4=
 github.com/aerogear/charmil v0.8.2 h1:g22vYPRoJQNHKXHN1IifyqGItqgbVLiyP3kd3hOu0eQ=
 github.com/aerogear/charmil v0.8.2/go.mod h1:2v1Kr4qgKppFOu7zcppFji/6r0qDQjqpsy3JaNMk7O8=
+github.com/aerogear/charmil-plugin-example v0.2.1 h1:Wn/hPDxbaeIaML56cP73L04J5G7ilPuK7ygxHHAJht0=
+github.com/aerogear/charmil-plugin-example v0.2.1/go.mod h1:HhBTEbpzgmaRLTzGhBDDpvB5Bw+S9VasZCAURiai6C8=
 github.com/agnivade/levenshtein v1.0.1/go.mod h1:CURSv5d9Uaml+FovSIICkLbAUZ9S4RqaHDIsdSBg7lM=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=

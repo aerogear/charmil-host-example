@@ -7,7 +7,7 @@ require (
 	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/Nerzal/gocloak/v7 v7.11.0
 	github.com/aerogear/charmil v0.8.2
-	github.com/aerogear/charmil-plugin-example v0.2.0
+	github.com/aerogear/charmil-plugin-example v0.2.1
 	github.com/coreos/go-oidc/v3 v3.0.0
 	github.com/golang-jwt/jwt/v4 v4.0.0
 	github.com/google/go-cmp v0.5.6 // indirect
