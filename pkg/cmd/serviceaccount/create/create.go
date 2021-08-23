@@ -27,7 +27,7 @@ import (
 
 type Options struct {
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -45,7 +45,7 @@ type Options struct {
 func NewCreateCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
 		IO:         f.IOStreams,
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		localizer:  f.Localizer,

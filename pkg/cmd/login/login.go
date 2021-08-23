@@ -62,7 +62,7 @@ var masAuthURLAliases = map[string]string{
 }
 
 type Options struct {
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Logger     func() (logging.Logger, error)
 	Connection factory.ConnectionFunc
 	IO         *iostreams.IOStreams
@@ -81,7 +81,7 @@ type Options struct {
 // NewLoginCmd gets the command that's log the user in
 func NewLoginCmd(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
@@ -158,7 +158,7 @@ func runLogin(opts *Options) (err error) {
 			Scopes:     opts.scopes,
 			Logger:     logger,
 			IO:         opts.IO,
-			Config:     opts.Config,
+			CfgHandler: opts.CfgHandler,
 			ClientID:   opts.clientID,
 			PrintURL:   opts.printURL,
 			Localizer:  opts.localizer,
@@ -185,23 +185,14 @@ func runLogin(opts *Options) (err error) {
 		}
 	}
 
-	cfg, err := opts.Config.Load()
-	if err != nil {
-		return err
-	}
+	opts.CfgHandler.Cfg.APIUrl = gatewayURL.String()
+	opts.CfgHandler.Cfg.Insecure = opts.insecureSkipTLSVerify
+	opts.CfgHandler.Cfg.ClientID = opts.clientID
+	opts.CfgHandler.Cfg.AuthURL = opts.authURL
+	opts.CfgHandler.Cfg.MasAuthURL = opts.masAuthURL
+	opts.CfgHandler.Cfg.Scopes = opts.scopes
 
-	cfg.APIUrl = gatewayURL.String()
-	cfg.Insecure = opts.insecureSkipTLSVerify
-	cfg.ClientID = opts.clientID
-	cfg.AuthURL = opts.authURL
-	cfg.MasAuthURL = opts.masAuthURL
-	cfg.Scopes = opts.scopes
-
-	if err = opts.Config.Save(cfg); err != nil {
-		return err
-	}
-
-	username, ok := token.GetUsername(cfg.AccessToken)
+	username, ok := token.GetUsername(opts.CfgHandler.Cfg.AccessToken)
 	logger.Info("")
 
 	if !ok {
@@ -220,23 +211,16 @@ func runLogin(opts *Options) (err error) {
 }
 
 func loginWithOfflineToken(opts *Options) (err error) {
-	cfg, err := opts.Config.Load()
-	if err != nil {
-		return err
-	}
-	cfg.Insecure = opts.insecureSkipTLSVerify
-	cfg.ClientID = opts.clientID
-	cfg.AuthURL = opts.authURL
-	cfg.MasAuthURL = opts.masAuthURL
-	cfg.Scopes = opts.scopes
-	cfg.RefreshToken = opts.offlineToken
-	// remove MAS-SSO tokens, as this does not support token login
-	cfg.MasAccessToken = ""
-	cfg.MasRefreshToken = ""
 
-	if err = opts.Config.Save(cfg); err != nil {
-		return err
-	}
+	opts.CfgHandler.Cfg.Insecure = opts.insecureSkipTLSVerify
+	opts.CfgHandler.Cfg.ClientID = opts.clientID
+	opts.CfgHandler.Cfg.AuthURL = opts.authURL
+	opts.CfgHandler.Cfg.MasAuthURL = opts.masAuthURL
+	opts.CfgHandler.Cfg.Scopes = opts.scopes
+	opts.CfgHandler.Cfg.RefreshToken = opts.offlineToken
+	// remove MAS-SSO tokens, as this does not support token login
+	opts.CfgHandler.Cfg.MasAccessToken = ""
+	opts.CfgHandler.Cfg.MasRefreshToken = ""
 
 	_, err = opts.Connection(connection.DefaultConfigSkipMasAuth)
 	return err

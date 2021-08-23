@@ -23,13 +23,8 @@ func DevPreviewEnabled(f *factory.Factory) bool {
 		logger.Info("Cannot determine status of dev preview. ", err)
 		return false
 	}
-	config, err := f.Config.Load()
-	if err != nil {
-		logger.Info("Cannot determine status of dev preview. ", err)
-		return false
-	}
 
-	return config.DevPreviewEnabled
+	return f.CfgHandler.Cfg.DevPreviewEnabled
 }
 
 // Enable dev preview
@@ -40,22 +35,12 @@ func EnableDevPreview(f *factory.Factory, enablement bool) (*config.Config, erro
 		return nil, err
 	}
 
-	config, err := f.Config.Load()
-	if err != nil {
-		logger.Info(f.Localizer.LocalizeByID("profile.error.enablement"), err)
-		return nil, err
-	}
+	f.CfgHandler.Cfg.DevPreviewEnabled = enablement
 
-	config.DevPreviewEnabled = enablement
-	err = f.Config.Save(config)
-	if err != nil {
-		logger.Info(f.Localizer.LocalizeByID("profile.error.enablement"), err)
-		return nil, err
-	}
-	if config.DevPreviewEnabled {
+	if f.CfgHandler.Cfg.DevPreviewEnabled {
 		logger.Info(f.Localizer.LocalizeByID("profile.status.devpreview.enabled"))
 	} else {
 		logger.Info(f.Localizer.LocalizeByID("profile.status.devpreview.disabled"))
 	}
-	return config, err
+	return f.CfgHandler.Cfg, err
 }

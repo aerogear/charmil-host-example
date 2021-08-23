@@ -32,7 +32,7 @@ type Options struct {
 	id           string
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	localizer  localize.Localizer
 }
@@ -50,7 +50,7 @@ type consumerRow struct {
 func NewDescribeConsumerGroupCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
 		Connection: f.Connection,
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		IO:         f.IOStreams,
 		localizer:  f.Localizer,
 	}
@@ -71,16 +71,11 @@ func NewDescribeConsumerGroupCommand(f *factory.Factory) *cobra.Command {
 				return runCmd(opts)
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
-			if !cfg.HasKafka() {
+			if !f.CfgHandler.Cfg.HasKafka() {
 				return errors.New(opts.localizer.LocalizeByID("kafka.consumerGroup.common.error.noKafkaSelected"))
 			}
 
-			opts.kafkaID = cfg.Services.Kafka.ClusterID
+			opts.kafkaID = opts.CfgHandler.Cfg.Services.Kafka.ClusterID
 
 			return runCmd(opts)
 		},

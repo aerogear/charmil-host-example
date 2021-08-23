@@ -17,7 +17,7 @@ import (
 )
 
 type Options struct {
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -26,7 +26,7 @@ type Options struct {
 // NewLogoutCommand gets the command that's logs the current logged in user
 func NewLogoutCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		localizer:  f.Localizer,

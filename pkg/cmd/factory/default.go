@@ -9,9 +9,9 @@ import (
 	"github.com/aerogear/charmil-host-example/pkg/config"
 	"github.com/aerogear/charmil-host-example/pkg/connection"
 	"github.com/aerogear/charmil-host-example/pkg/httputil"
+
 	"github.com/aerogear/charmil/core/utils/iostreams"
 	"github.com/aerogear/charmil/core/utils/localize"
-
 	"github.com/aerogear/charmil/core/utils/logging"
 )
 
@@ -20,12 +20,11 @@ import (
 // giving centralized access to the config and API connection
 
 // nolint:funlen
-func New(cliVersion string, localizer localize.Localizer) *Factory {
+func New(cliVersion string, localizer localize.Localizer, cfgHandler *config.CfgHandler) *Factory {
 	io := iostreams.System()
 
 	var logger logging.Logger
 	var conn connection.Connection
-	cfgFile := config.NewFile()
 
 	loggerFunc := func() (logging.Logger, error) {
 		if logger != nil {
@@ -51,50 +50,45 @@ func New(cliVersion string, localizer localize.Localizer) *Factory {
 			return conn, nil
 		}
 
-		cfg, err := cfgFile.Load()
-		if err != nil {
-			return nil, err
-		}
-
 		builder := connection.NewBuilder()
 
-		if cfg.AccessToken != "" {
-			builder.WithAccessToken(cfg.AccessToken)
+		if cfgHandler.Cfg.AccessToken != "" {
+			builder.WithAccessToken(cfgHandler.Cfg.AccessToken)
 		}
-		if cfg.RefreshToken != "" {
-			builder.WithRefreshToken(cfg.RefreshToken)
+		if cfgHandler.Cfg.RefreshToken != "" {
+			builder.WithRefreshToken(cfgHandler.Cfg.RefreshToken)
 		}
-		if cfg.MasAccessToken != "" {
-			builder.WithMASAccessToken(cfg.MasAccessToken)
+		if cfgHandler.Cfg.MasAccessToken != "" {
+			builder.WithMASAccessToken(cfgHandler.Cfg.MasAccessToken)
 		}
-		if cfg.MasRefreshToken != "" {
-			builder.WithMASRefreshToken(cfg.MasRefreshToken)
+		if cfgHandler.Cfg.MasRefreshToken != "" {
+			builder.WithMASRefreshToken(cfgHandler.Cfg.MasRefreshToken)
 		}
-		if cfg.ClientID != "" {
-			builder.WithClientID(cfg.ClientID)
+		if cfgHandler.Cfg.ClientID != "" {
+			builder.WithClientID(cfgHandler.Cfg.ClientID)
 		}
-		if cfg.Scopes != nil {
-			builder.WithScopes(cfg.Scopes...)
+		if cfgHandler.Cfg.Scopes != nil {
+			builder.WithScopes(cfgHandler.Cfg.Scopes...)
 		}
-		if cfg.APIUrl != "" {
-			builder.WithURL(cfg.APIUrl)
+		if cfgHandler.Cfg.APIUrl != "" {
+			builder.WithURL(cfgHandler.Cfg.APIUrl)
 		}
-		if cfg.AuthURL == "" {
-			cfg.AuthURL = build.ProductionAuthURL
+		if cfgHandler.Cfg.AuthURL == "" {
+			cfgHandler.Cfg.AuthURL = build.ProductionAuthURL
 		}
-		builder.WithAuthURL(cfg.AuthURL)
+		builder.WithAuthURL(cfgHandler.Cfg.AuthURL)
 
-		if cfg.MasAuthURL == "" {
-			cfg.MasAuthURL = build.ProductionMasAuthURL
+		if cfgHandler.Cfg.MasAuthURL == "" {
+			cfgHandler.Cfg.MasAuthURL = build.ProductionMasAuthURL
 		}
-		builder.WithMASAuthURL(cfg.MasAuthURL)
+		builder.WithMASAuthURL(cfgHandler.Cfg.MasAuthURL)
 
-		builder.WithInsecure(cfg.Insecure)
+		builder.WithInsecure(cfgHandler.Cfg.Insecure)
 
-		builder.WithConfig(cfgFile)
+		builder.WithConfig(cfgHandler)
 
 		// create a logger if it has not already been created
-		logger, err = loggerFunc()
+		logger, err := loggerFunc()
 		if err != nil {
 			return nil, err
 		}
@@ -110,7 +104,7 @@ func New(cliVersion string, localizer localize.Localizer) *Factory {
 
 		builder.WithConnectionConfig(connectionCfg)
 
-		conn, err = builder.Build()
+		conn, err := builder.Build()
 		if err != nil {
 			return nil, err
 		}
@@ -125,9 +119,9 @@ func New(cliVersion string, localizer localize.Localizer) *Factory {
 
 	return &Factory{
 		IOStreams:  io,
-		Config:     cfgFile,
 		Connection: connectionFunc,
 		Logger:     loggerFunc,
 		Localizer:  localizer,
+		CfgHandler: cfgHandler,
 	}
 }

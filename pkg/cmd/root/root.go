@@ -1,24 +1,24 @@
 package root
 
 import (
+	"context"
 	"flag"
-	"fmt"
-	"os"
+	"net/http"
 
 	"github.com/aerogear/charmil-host-example/internal/build"
-	"github.com/aerogear/charmil-host-example/pkg/config"
-	"github.com/aerogear/charmil-host-example/pkg/localesettings"
-	"github.com/aerogear/charmil/core/utils/localize"
-	"golang.org/x/text/language"
 
 	"github.com/aerogear/charmil-host-example/pkg/cmd/login"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/status"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/whoami"
+	"github.com/aerogear/charmil-host-example/pkg/config"
+	"github.com/aerogear/charmil-host-example/pkg/httputil"
 
 	pluginfactory "github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
+	pluginCfg "github.com/aerogear/charmil-plugin-example/pkg/config"
+
+	pluginConnection "github.com/aerogear/charmil-plugin-example/pkg/connection"
 
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry"
-	pluginConnection "github.com/aerogear/charmil-plugin-example/pkg/connection"
 
 	"github.com/aerogear/charmil-host-example/pkg/arguments"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/cluster"
@@ -41,6 +41,7 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 		Long:          f.Localizer.LocalizeByID("root.cmd.longDescription"),
 		Example:       f.Localizer.LocalizeByID("root.cmd.example"),
 	}
+
 	fs := cmd.PersistentFlags()
 	arguments.AddDebugFlag(fs)
 	// this flag comes out of the box, but has its own basic usage text, so this overrides that
@@ -66,67 +67,78 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 	cmd.AddCommand(cliversion.NewVersionCmd(f))
 	// cmd.AddCommand(config.NewConfigCommand(f))
 
-	locConfig := &localize.Config{
-		Language: &language.English,
-		Files:    localesettings.DefaultLocales,
-		Format:   "toml",
+	if !f.CfgHandler.Cfg.HasServiceConfigMap() {
+		f.CfgHandler.Cfg.Services = &config.ServiceConfigMap{
+			Kafka:           &config.KafkaConfig{},
+			ServiceRegistry: &pluginCfg.Config{},
+		}
 	}
 
-	localizer, err := localize.New(locConfig)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+	// Creates a config handler instance for plugin by passing the suitable config field.
+	// This line is responsible for interaction between plugin config and the host config file.
+	pCfgHandler := &pluginCfg.CfgHandler{
+		Cfg: f.CfgHandler.Cfg.Services.ServiceRegistry,
 	}
 
-	pfact := pluginfactory.New(build.Version, localizer)
+	// Creates a plugin factory instance by passing the newly created config handler instance
+	pFactory := pluginfactory.New(build.Version, nil, pCfgHandler)
 
 	pluginBuilder := pluginConnection.NewBuilder()
+	if f.CfgHandler.Cfg.AccessToken != "" {
+		pluginBuilder.WithAccessToken(f.CfgHandler.Cfg.AccessToken)
+	}
+	if f.CfgHandler.Cfg.RefreshToken != "" {
+		pluginBuilder.WithRefreshToken(f.CfgHandler.Cfg.RefreshToken)
+	}
+	if f.CfgHandler.Cfg.MasAccessToken != "" {
+		pluginBuilder.WithMASAccessToken(f.CfgHandler.Cfg.MasAccessToken)
+	}
+	if f.CfgHandler.Cfg.MasRefreshToken != "" {
+		pluginBuilder.WithMASRefreshToken(f.CfgHandler.Cfg.MasRefreshToken)
+	}
+	if f.CfgHandler.Cfg.ClientID != "" {
+		pluginBuilder.WithClientID(f.CfgHandler.Cfg.ClientID)
+	}
+	if f.CfgHandler.Cfg.Scopes != nil {
+		pluginBuilder.WithScopes(f.CfgHandler.Cfg.Scopes...)
+	}
+	if f.CfgHandler.Cfg.APIUrl != "" {
+		pluginBuilder.WithURL(f.CfgHandler.Cfg.APIUrl)
+	}
+	if f.CfgHandler.Cfg.AuthURL == "" {
+		f.CfgHandler.Cfg.AuthURL = build.ProductionAuthURL
+	}
+	pluginBuilder.WithAuthURL(f.CfgHandler.Cfg.AuthURL)
+	if f.CfgHandler.Cfg.MasAuthURL == "" {
+		f.CfgHandler.Cfg.MasAuthURL = build.ProductionMasAuthURL
+	}
+	pluginBuilder.WithMASAuthURL(f.CfgHandler.Cfg.MasAuthURL)
+	pluginBuilder.WithInsecure(f.CfgHandler.Cfg.Insecure)
+	pluginBuilder.WithConfig(pCfgHandler)
 
-	cfgFile := config.NewFile()
-	cfg, err := cfgFile.Load()
-	if err != nil {
-		panic(err)
-	}
+	cmd.AddCommand(registry.NewServiceRegistryCommand(pFactory, func(connectionCfg *pluginConnection.Config) (pluginConnection.Connection, error) {
+		transportWrapper := func(a http.RoundTripper) http.RoundTripper {
+			return &httputil.LoggingRoundTripper{
+				Proxied: a,
+			}
+		}
 
-	if cfg.AccessToken != "" {
-		pluginBuilder.WithAccessToken(cfg.AccessToken)
-	}
-	if cfg.RefreshToken != "" {
-		pluginBuilder.WithRefreshToken(cfg.RefreshToken)
-	}
-	if cfg.MasAccessToken != "" {
-		pluginBuilder.WithMASAccessToken(cfg.MasAccessToken)
-	}
-	if cfg.MasRefreshToken != "" {
-		pluginBuilder.WithMASRefreshToken(cfg.MasRefreshToken)
-	}
-	if cfg.ClientID != "" {
-		pluginBuilder.WithClientID(cfg.ClientID)
-	}
-	if cfg.Scopes != nil {
-		pluginBuilder.WithScopes(cfg.Scopes...)
-	}
-	if cfg.APIUrl != "" {
-		pluginBuilder.WithURL(cfg.APIUrl)
-	}
-	if cfg.AuthURL == "" {
-		cfg.AuthURL = build.ProductionAuthURL
-	}
-	pluginBuilder.WithAuthURL(cfg.AuthURL)
+		pluginBuilder.WithTransportWrapper(transportWrapper)
 
-	if cfg.MasAuthURL == "" {
-		cfg.MasAuthURL = build.ProductionMasAuthURL
-	}
-	pluginBuilder.WithMASAuthURL(cfg.MasAuthURL)
+		pluginBuilder.WithConnectionConfig(connectionCfg)
 
-	pluginBuilder.WithInsecure(cfg.Insecure)
+		conn, err := pluginBuilder.Build()
+		if err != nil {
+			return nil, err
+		}
 
-	pluginBuilder.WithConfig(cfgFile)
+		err = conn.RefreshTokens(context.TODO())
+		if err != nil {
+			return nil, err
+		}
 
-	cmd.AddCommand(registry.NewServiceRegistryCommand(pfact, pluginBuilder))
-
-	// Early stage/dev preview commands
-	// cmd.AddCommand(registry.NewServiceRegistryCommand(f))
+		return conn, nil
+	}))
 
 	return cmd
 }

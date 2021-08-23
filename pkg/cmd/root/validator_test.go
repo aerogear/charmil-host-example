@@ -30,13 +30,12 @@ func Test_ValidateCommandsUsingCharmilValidator(t *testing.T) {
 	}
 
 	buildVersion := build.Version
-	cmdFactory := factory.New(build.Version, localizer)
+	cmdFactory := factory.New(build.Version, localizer, mockutil.NewCfgHandlerMock(&config.Config{}))
 	if err != nil {
 		fmt.Println(cmdFactory.IOStreams.ErrOut, err)
 		os.Exit(1)
 	}
 
-	mockutil.NewConfigMock(&config.Config{})
 	cmd := NewRootCommand(cmdFactory, buildVersion)
 
 	// Testing cobra commands with default recommended config

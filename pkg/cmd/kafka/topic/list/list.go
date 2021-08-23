@@ -29,7 +29,7 @@ import (
 )
 
 type Options struct {
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	IO         *iostreams.IOStreams
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
@@ -52,7 +52,7 @@ type topicRow struct {
 // NewListTopicCommand gets a new command for getting kafkas.
 func NewListTopicCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
@@ -89,16 +89,11 @@ func NewListTopicCommand(f *factory.Factory) *cobra.Command {
 				}
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
-			if !cfg.HasKafka() {
+			if !f.CfgHandler.Cfg.HasKafka() {
 				return errors.New(opts.localizer.LocalizeByID("kafka.topic.common.error.noKafkaSelected"))
 			}
 
-			opts.kafkaID = cfg.Services.Kafka.ClusterID
+			opts.kafkaID = opts.CfgHandler.Cfg.Services.Kafka.ClusterID
 
 			return runCmd(opts)
 		},

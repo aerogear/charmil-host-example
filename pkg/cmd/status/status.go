@@ -32,7 +32,7 @@ var validServices = []string{kafkaSvcName}
 
 type Options struct {
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Logger     func() (logging.Logger, error)
 	Connection factory.ConnectionFunc
 	localizer  localize.Localizer
@@ -44,7 +44,7 @@ type Options struct {
 func NewStatusCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
 		IO:         f.IOStreams,
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		services:   validServices,
@@ -92,7 +92,7 @@ func runStatus(opts *Options) error {
 	}
 
 	pkgOpts := &pkgStatus.Options{
-		Config:     opts.Config,
+		CfgHandler: opts.CfgHandler,
 		Connection: connection,
 		Logger:     opts.Logger,
 		Services:   opts.services,
