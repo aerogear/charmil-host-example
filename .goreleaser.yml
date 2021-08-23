@@ -18,7 +18,7 @@ builds:
       binary: bin/rhoas
       main: ./cmd/rhoas
       ldflags:
-        - -s -w -X github.com/redhat-developer/app-services-cli/internal/build.Version={{.Version}}
+        - -s -w -X github.com/aerogear/charmil-host-example/internal/build.Version={{.Version}}
     id: macos
     goos: [darwin]
     goarch: [amd64]
