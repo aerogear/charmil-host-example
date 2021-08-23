@@ -6,17 +6,17 @@ import (
 	"fmt"
 
 	"github.com/aerogear/charmil-host-example/pkg/connection"
-	"github.com/aerogear/charmil-host-example/pkg/localize"
 	"github.com/aerogear/charmil-host-example/pkg/serviceregistry"
+	"github.com/aerogear/charmil/core/utils/localize"
 
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/logging"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/flag"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 	"github.com/spf13/cobra"
 
 	srsmgmtv1client "github.com/redhat-developer/app-services-sdk-go/registrymgmt/apiv1/client"

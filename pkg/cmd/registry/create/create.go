@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aerogear/charmil-host-example/pkg/localize"
 	"github.com/aerogear/charmil-host-example/pkg/serviceregistry"
+	"github.com/aerogear/charmil/core/utils/localize"
 
 	"github.com/aerogear/charmil-host-example/pkg/ams"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/flag"
@@ -17,14 +17,14 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/aerogear/charmil-host-example/pkg/dump"
-	"github.com/aerogear/charmil-host-example/pkg/iostreams"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 
-	"github.com/aerogear/charmil-host-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/logging"
 
 	"github.com/spf13/cobra"
 
-	"github.com/aerogear/charmil-host-example/internal/config"
 	"github.com/aerogear/charmil-host-example/pkg/cmd/factory"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 )
 
 type Options struct {
