@@ -65,7 +65,6 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 	cmd.AddCommand(completion.NewCompletionCommand(f))
 	cmd.AddCommand(whoami.NewWhoAmICmd(f))
 	cmd.AddCommand(cliversion.NewVersionCmd(f))
-	// cmd.AddCommand(config.NewConfigCommand(f))
 
 	if !f.CfgHandler.Cfg.HasServiceConfigMap() {
 		f.CfgHandler.Cfg.Services = &config.ServiceConfigMap{
@@ -83,6 +82,17 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 	// Creates a plugin factory instance by passing the newly created config handler instance
 	pFactory := pluginfactory.New(build.Version, nil, pCfgHandler)
 
+	// initilize plugin config in pFactory
+	initPluginConfig(f, pFactory, pCfgHandler)
+
+	// add service-registry command from plugin
+	cmd.AddCommand(registry.NewServiceRegistryCommand(pFactory))
+
+	return cmd
+}
+
+// initPluginConfig initializes configuration for plugin from host
+func initPluginConfig(f *factory.Factory, pFactory *pluginfactory.Factory, pluginCfgHandler *pluginCfg.CfgHandler) {
 	pluginBuilder := pluginConnection.NewBuilder()
 	if f.CfgHandler.Cfg.AccessToken != "" {
 		pluginBuilder.WithAccessToken(f.CfgHandler.Cfg.AccessToken)
@@ -114,9 +124,9 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 	}
 	pluginBuilder.WithMASAuthURL(f.CfgHandler.Cfg.MasAuthURL)
 	pluginBuilder.WithInsecure(f.CfgHandler.Cfg.Insecure)
-	pluginBuilder.WithConfig(pCfgHandler)
+	pluginBuilder.WithConfig(pluginCfgHandler)
 
-	cmd.AddCommand(registry.NewServiceRegistryCommand(pFactory, func(connectionCfg *pluginConnection.Config) (pluginConnection.Connection, error) {
+	pluginConnectionFunction := func(connectionCfg *pluginConnection.Config) (pluginConnection.Connection, error) {
 		transportWrapper := func(a http.RoundTripper) http.RoundTripper {
 			return &httputil.LoggingRoundTripper{
 				Proxied: a,
@@ -138,7 +148,7 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 		}
 
 		return conn, nil
-	}))
+	}
 
-	return cmd
+	pFactory.Connection = pluginConnectionFunction
 }
