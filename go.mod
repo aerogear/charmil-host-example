@@ -33,4 +33,4 @@ require (
 	sigs.k8s.io/controller-runtime v0.9.6
 )
 
-replace github.com/aerogear/charmil-plugin-example => ../charmil-plugin-example
+// replace github.com/aerogear/charmil-plugin-example => ../charmil-plugin-example
